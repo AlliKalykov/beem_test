@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 120
+show-source = true
+extend-exclude =
+    .*
+    venv*
+per-file-ignores =
+    */migrations/*:E501
