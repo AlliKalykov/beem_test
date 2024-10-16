@@ -3,6 +3,7 @@ from typing import Final, List
 from django.db import models
 from django.db.models import TextChoices
 
+
 BAN_TIME_MINUTES: Final[int] = 15
 BAD_ATTEMPTS_COUNT: Final[int] = 5
 OTP_TOKEN_EXPIRED: Final[str] = "expired"

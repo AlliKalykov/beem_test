@@ -4,30 +4,27 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
-
-from rest_framework import exceptions
-from rest_framework import status, viewsets
+from django.contrib.auth import authenticate, login
+from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from django.contrib.auth import authenticate, login
+from abc_back.api.constants import ErrorCode
 from abc_back.api.serializers import EmptySerializer
 from abc_back.api.v1.users.serializers import ProfileEditSerializer, ProfileInfoSerializer
 from abc_back.api.views import MultiSerializerViewSetMixin, MultiThrottllesViewSetMixin
 from abc_back.containers import Container
-from abc_back.api.constants import ErrorCode
 from abc_back.users.models import User
+
 
 if TYPE_CHECKING:
     from abc_back.users.services import EmailOTPService, UserService
 
 from . import openapi
-from .serializers import (
-    RegisterSerializer, LoginSerializer, ValidateEmailOTPTokenSerializer, EmailSerializer,
-)
+from .serializers import EmailSerializer, LoginSerializer, RegisterSerializer, ValidateEmailOTPTokenSerializer
 from .throttles import EmailOTPCreateThrottle, EmailOTPValidationThrottle
 
 

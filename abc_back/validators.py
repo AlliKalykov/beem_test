@@ -2,13 +2,12 @@ import datetime
 import re
 from typing import Any, Optional
 
-from rest_framework.serializers import *  # noqa
-
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator as DjangoEmailValidator
 from django.core.validators import RegexValidator
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
+from rest_framework.serializers import *  # noqa
 
 
 class Validator(Serializer):  # noqa

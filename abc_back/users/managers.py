@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
-
 from django.db import models
+
 
 if TYPE_CHECKING:
     from abc_back.users.repositories import UserRepository

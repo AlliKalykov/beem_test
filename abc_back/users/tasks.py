@@ -7,6 +7,7 @@ from dependency_injector.wiring import Provide, inject
 from abc_back.celery import app
 from abc_back.containers import Container
 
+
 if TYPE_CHECKING:
     from .services import EmailOTPService
 

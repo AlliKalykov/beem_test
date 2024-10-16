@@ -7,9 +7,9 @@ from celery import Celery, beat
 from celery.app.task import Task as BaseTask
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
+from django.core.cache import cache
 from django_celery_beat.schedulers import DatabaseScheduler as _DatabaseScheduler
 
-from django.core.cache import cache
 
 if TYPE_CHECKING:
     from celery.result import AsyncResult
@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from django.core.cache.backends.base import BaseCache
 
 from configurations.importer import installed
+
 
 if not installed:
     import configurations

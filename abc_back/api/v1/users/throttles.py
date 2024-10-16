@@ -1,9 +1,8 @@
-from rest_framework import exceptions
-from rest_framework.throttling import BaseThrottle
-
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
+from rest_framework import exceptions
+from rest_framework.throttling import BaseThrottle
 
 from .exceptions import CreateOTPExceptionThrottled, ValidateOTPExceptionThrottled
 

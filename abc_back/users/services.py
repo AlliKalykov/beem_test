@@ -15,9 +15,10 @@ from abc_back.utils import generate_code
 
 from .constants import (
     BAD_ATTEMPTS_COUNT, BAN_TIME_MINUTES, OTP_TOKEN_EXPIRED, OTP_TOKEN_INVALID, OTP_TOKEN_SEND_DELAY_TIME_MINUTES,
-    OTP_TOKEN_VALID, OTP_TOKEN_VALIDATION_TIME_MINUTES
+    OTP_TOKEN_VALID, OTP_TOKEN_VALIDATION_TIME_MINUTES,
 )
 from .repositories import UserRepository
+
 
 logger = logging.getLogger(__name__)
 

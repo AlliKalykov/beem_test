@@ -1,8 +1,8 @@
+from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from django.urls import include, path
+from abc_back.api.v1.users.views import ProfileViewSet, UserViewSet
 
-from abc_back.api.v1.users.views import UserViewSet, ProfileViewSet
 
 app_name = "users"
 manager_calendar_base_name = "users"

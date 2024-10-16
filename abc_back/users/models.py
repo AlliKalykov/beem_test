@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Final
 
-
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
@@ -16,10 +15,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 from abc_back.utils import generate_filename
 from abc_back.validators import MaxFileSizeValidator, NameValidator, validate_date_of_birth, validate_email
 
-from .constants import (
-    USER_AVATAR_ALLOWED_EXTENSIONS, USER_AVATAR_MAX_UPLOAD_SIZE, UserGenderChoices,
-)
+from .constants import USER_AVATAR_ALLOWED_EXTENSIONS, USER_AVATAR_MAX_UPLOAD_SIZE, UserGenderChoices
 from .managers import ActiveUserManager
+
 
 TEACHBASE_AUTH_USER_UID_DEFAULT_LENGTH: Final[int] = 128
 

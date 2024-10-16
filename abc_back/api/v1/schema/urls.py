@@ -1,6 +1,6 @@
+from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from django.urls import path
 
 urlpatterns = [
     path("", SpectacularAPIView.as_view(), name="schema"),

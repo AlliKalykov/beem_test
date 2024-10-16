@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Type
 
+
 if TYPE_CHECKING:
+    from django.db.models.query import QuerySet
     from rest_framework.serializers import Serializer
     from rest_framework.throttling import BaseThrottle
-
-    from django.db.models.query import QuerySet
 
 
 class MultiSerializerViewSetMixin:

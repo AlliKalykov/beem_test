@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from rest_framework.exceptions import APIException
 
+
 if TYPE_CHECKING:
     import requests
 

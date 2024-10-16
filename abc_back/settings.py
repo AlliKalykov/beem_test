@@ -1,19 +1,16 @@
 import datetime
 import logging
-import sentry_sdk
 import socket
-
 from pathlib import Path
 
+import sentry_sdk
 from configurations import Configuration, values
-
 from django.utils.functional import cached_property
-
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-
 from abc_back.logging import LoggerDescriptor
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

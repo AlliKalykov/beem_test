@@ -1,17 +1,20 @@
 from __future__ import annotations
 
-from django_celery_beat.admin import ClockedScheduleAdmin as _ClockedScheduleAdmin
-from django_celery_beat.admin import PeriodicTaskAdmin as _PeriodicTaskAdmin
-from django_celery_beat.models import ClockedSchedule, CrontabSchedule, IntervalSchedule, PeriodicTask, SolarSchedule
-# from django_object_actions import DjangoObjectActions
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models.functions import Collate
+from django_celery_beat.admin import ClockedScheduleAdmin as _ClockedScheduleAdmin
+from django_celery_beat.admin import PeriodicTaskAdmin as _PeriodicTaskAdmin
+from django_celery_beat.models import ClockedSchedule, CrontabSchedule, IntervalSchedule, PeriodicTask, SolarSchedule
 
 from abc_back.admin import SuperUserModuleMixin
 from abc_back.users.models import User
 from abc_back.utils import set_attrs
+
+
+# from django_object_actions import DjangoObjectActions
+
+
 
 
 admin.site.unregister(IntervalSchedule)

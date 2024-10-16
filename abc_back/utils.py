@@ -1,9 +1,8 @@
 import os
 import pathlib
 import uuid
-
-from random import sample
 from functools import partial
+from random import sample
 
 
 def generate_filename(__filename: str | os.PathLike | None = None, /) -> str:
