@@ -1,7 +1,7 @@
 import logging
 import uuid
 from datetime import timedelta
-from typing import Any, AnyStr
+from typing import Any
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -108,7 +108,6 @@ class EmailOTPService:
             from_email=f"ABC Concierge <{settings.DEFAULT_FROM_EMAIL}>",
         )
         email_message.send()
-
 
 
 class UserService:

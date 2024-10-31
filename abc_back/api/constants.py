@@ -17,7 +17,7 @@ class _ErrorCode(NamedTuple):
 class ErrorCode(_ErrorCode, enum.Enum):
     # 400
     BAD_REQUEST = BadRequest, "Неверный запрос."
-    EMAIL_ALREADY_TAKEN = BadRequest, 'Email уже зарегистрирован.'
+    EMAIL_ALREADY_TAKEN = BadRequest, "Email уже зарегистрирован."
     VALIDATION_ERROR = ValidationError, "Ошибка валидации."
     INVALID_TOKEN = BadRequest, "Неправильный токен."
     # 401

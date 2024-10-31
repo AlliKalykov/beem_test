@@ -1,6 +1,4 @@
-from typing import Optional
-
-from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Subquery, Value, When
+from django.db.models import QuerySet
 from django.db.models.query import FlatValuesListIterable, ValuesIterable
 
 from abc_back.exceptions import NotFoundError

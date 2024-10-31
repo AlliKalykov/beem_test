@@ -5,7 +5,7 @@ from typing import Final
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils import timezone
@@ -76,21 +76,20 @@ class User(AbstractUser):
     email = models.EmailField(
         _("email address"),
         unique=True,
-        db_collation=None if settings.DATABASES['default'][
-                                 'ENGINE'] == 'django.db.backends.sqlite3' else "case_insensitive",
-
+        db_collation=(
+            None if settings.DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3" else "case_insensitive"
+        ),
         error_messages={
             "unique": "Пользователь с таким email адресом уже зарегистрирован.",
             "invalid": "Пожалуйста, введите корректный email.",
         },
         validators=[validate_email],
     )
-
-    first_name = models.CharField(_("first name"), max_length=150, blank=True, validators=[NameValidator()])
-    last_name = models.CharField(_("last name"), max_length=150, blank=True, validators=[NameValidator()])
+    first_name = models.CharField(_("first name"), max_length=36, blank=True, validators=[NameValidator()])
+    last_name = models.CharField(_("last name"), max_length=36, blank=True, validators=[NameValidator()])
     middle_name = models.CharField(
         "Отчество",
-        max_length=255,
+        max_length=36,
         blank=True,
         null=True,
         validators=[NameValidator()],
@@ -98,7 +97,8 @@ class User(AbstractUser):
 
     date_of_birth = models.DateField(
         verbose_name="Дата рождения",
-        blank=True, null=True,
+        blank=True,
+        null=True,
         validators=[validate_date_of_birth],
     )
 
@@ -116,7 +116,6 @@ class User(AbstractUser):
 
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
-
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
@@ -127,7 +126,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-
 
     @property
     def full_name(self):

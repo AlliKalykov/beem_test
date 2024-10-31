@@ -1,0 +1,14 @@
+-c requirements.txt
+-c requirements.lint.txt
+-c requirements.test.txt
+
+pip-tools==7.3.0
+pre-commit==3.4.0
+
+django-debug-toolbar==4.2.0
+
+# for shell_plus --ipython
+ipython==8.15.0
+
+# for runserver_plus
+werkzeug==2.3.7

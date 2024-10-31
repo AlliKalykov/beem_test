@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Callable, ClassVar
 
 from celery import Celery, beat
 from celery.app.task import Task as BaseTask
-from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 from django.core.cache import cache
 from django_celery_beat.schedulers import DatabaseScheduler as _DatabaseScheduler

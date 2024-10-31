@@ -1,6 +1,5 @@
-from typing import Final, List
+from typing import Final
 
-from django.db import models
 from django.db.models import TextChoices
 
 

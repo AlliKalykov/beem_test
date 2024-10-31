@@ -1,8 +1,6 @@
 from abc_back.api.openapi import extend_schema
 
-from .serializers import (
-    LoginResponseSerializer, LoginSerializer, ProfileEditSerializer, ProfileInfoSerializer, RegisterSerializer,
-)
+from .serializers import LoginResponseSerializer, ProfileEditSerializer, ProfileInfoSerializer
 
 
 delete_profile = extend_schema(

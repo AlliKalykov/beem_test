@@ -3,8 +3,8 @@ import sys
 
 
 if __name__ == "__main__":
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'abc_back.settings')
-    os.environ.setdefault('DJANGO_CONFIGURATION', 'Dev')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "abc_back.settings.local")
+    os.environ.setdefault("DJANGO_CONFIGURATION", "Local")
 
     from configurations.management import execute_from_command_line
 

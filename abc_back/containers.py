@@ -9,4 +9,3 @@ class Container(containers.DeclarativeContainer):
     # Domain
 
     user_package = providers.Container(UserContainer)
-

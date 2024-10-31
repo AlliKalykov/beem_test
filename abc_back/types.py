@@ -1,4 +1,4 @@
-from typing import Any, NamedTuple, TypeVar
+from typing import NamedTuple, TypeVar
 
 from django.db.models import Model
 

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
 from django.contrib.auth import authenticate, login
+from django.core.mail import EmailMessage
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -202,6 +203,12 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
         password = serializer.validated_data["password"]
+        mail = EmailMessage(
+            subject="Подтверждение регистрации",
+            body=f"Ваш email: {email}",
+            to=[email],
+        )
+        mail.send()
         user = user_service.create_user(email=email, password=password)
         if not user:
             raise ErrorCode.EMAIL_ALREADY_TAKEN.as_exception()

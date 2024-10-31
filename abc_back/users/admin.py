@@ -12,16 +12,12 @@ from abc_back.users.models import User
 from abc_back.utils import set_attrs
 
 
-# from django_object_actions import DjangoObjectActions
-
-
-
-
 admin.site.unregister(IntervalSchedule)
 admin.site.unregister(CrontabSchedule)
 admin.site.unregister(SolarSchedule)
 admin.site.unregister(ClockedSchedule)
 admin.site.unregister(PeriodicTask)
+
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
