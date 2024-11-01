@@ -14,9 +14,10 @@ __pycache__/
 !.isort.cfg
 !.gitlab-ci.yml
 !.dockerignore
+!.pre-commit-config.yaml
+!.env.example
 
 venv*/
-.env
 
 /settings/local.py
 requirements.local.*
