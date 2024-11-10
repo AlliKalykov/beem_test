@@ -23,8 +23,10 @@ class Base(Configuration):
     log = LoggerDescriptor(__name__)
 
     PROJECT_NAME = "ABC Concierge"
-    PROJECT_BASE_URL = env("PROJECT_BASE_URL", default="http://localhost:8000")
+    PROJECT_BASE_URL = env("PROJECT_BASE_URL", default="http://localhost:7000")
     PROJECT_ENVIRONMENT = env("PROJECT_ENVIRONMENT", default="Production")
+
+    DJANGO_CONFIGURATION = env("DJANGO_CONFIGURATION", default="Dev")
 
     SECRET_KEY = env("SECRET_KEY", default="django-insecure$@")
     DEBUG = env("DEBUG", default=False)
@@ -44,6 +46,7 @@ class Base(Configuration):
 
         "rest_framework",
         "drf_spectacular",
+        "phonenumber_field",
 
         "corsheaders",
 
@@ -142,9 +145,6 @@ class Base(Configuration):
     EMAIL_USE_SSL = env("EMAIL_USE_SSL", default=False)
     DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
     ADMIN_EMAILS = env("ADMIN_EMAILS").split(",")
-    print(f"ADMIN_EMAILS: {ADMIN_EMAILS}")
-    print(f"EMAIL_PORT: {EMAIL_PORT}")
-    print(f"EMAIL_HOST_USER: {EMAIL_HOST_USER}")
 
     # REST_FRAMEWORK
     DEFAULT_PAGE_SIZE = 10
@@ -177,6 +177,43 @@ class Base(Configuration):
     SIMPLE_JWT = {
         "ACCESS_TOKEN_LIFETIME": ACCESS_TOKEN_LIFETIME,
         "REFRESH_TOKEN_LIFETIME": REFRESH_TOKEN_LIFETIME,
+        "ROTATE_REFRESH_TOKENS": False,
+        "BLACKLIST_AFTER_ROTATION": False,
+        "UPDATE_LAST_LOGIN": False,
+
+        "ALGORITHM": "HS256",
+        "SIGNING_KEY": SECRET_KEY,
+        "VERIFYING_KEY": None,
+        "AUDIENCE": None,
+        "ISSUER": None,
+        "JWK_URL": None,
+        "LEEWAY": 0,
+
+        "AUTH_HEADER_TYPES": ["Bearer"],
+        "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+        "USER_ID_FIELD": "id",
+        "USER_ID_CLAIM": "user_id",
+        "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+
+        "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+        "TOKEN_TYPE_CLAIM": "token_type",
+        "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+
+        "JTI_CLAIM": "jti",
+
+        "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
+        "SLIDING_TOKEN_LIFETIME": SLIDING_TOKEN_LIFETIME,
+        "SLIDING_TOKEN_REFRESH_LIFETIME": SLIDING_TOKEN_REFRESH_LIFETIME,
+    }
+
+    ACCESS_TOKEN_LIFETIME = env.int("ACCESS_TOKEN_LIFETIME", default=5)
+    REFRESH_TOKEN_LIFETIME = env.int("REFRESH_TOKEN_LIFETIME", default=24)
+    SLIDING_TOKEN_LIFETIME = datetime.timedelta(minutes=ACCESS_TOKEN_LIFETIME)
+    SLIDING_TOKEN_REFRESH_LIFETIME = datetime.timedelta(days=REFRESH_TOKEN_LIFETIME)
+    # Simple JWT
+    SIMPLE_JWT = {
+        "ACCESS_TOKEN_LIFETIME": SLIDING_TOKEN_LIFETIME,
+        "REFRESH_TOKEN_LIFETIME": SLIDING_TOKEN_REFRESH_LIFETIME,
         "ROTATE_REFRESH_TOKENS": False,
         "BLACKLIST_AFTER_ROTATION": False,
         "UPDATE_LAST_LOGIN": False,
@@ -286,3 +323,6 @@ class Base(Configuration):
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+    # ADMIN
+    SUPERUSER_LOGIN = env("SUPERUSER_LOGIN", default="admin@mail.ru")
+    SUPERUSER_PASSWORD = env("SUPERUSER_PASSWORD", default="yuek)rfrfqk")

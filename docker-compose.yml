@@ -1,0 +1,86 @@
+services:
+  postgres:
+    restart: always
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?}
+      - POSTGRES_DB=${POSTGRES_DB:?}
+    ports:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  redis:
+    restart: always
+    image: redis:7-alpine
+    ports:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    depends_on:
+      - postgres
+
+  app:
+    restart: always
+    image: ${IMAGE_APP_TAG}
+    env_file:
+      - .env
+    ports:
+      - ${APP_SERVER_HOST_PORT:?}:8000
+    volumes:
+      - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
+      - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
+    command: >
+      bash -c "cd /app
+      && python manage.py migrate
+      && python manage.py collectstatic --no-input
+      && gunicorn -c conf/gunicorn/config.py"
+    depends_on:
+      - postgres
+      - redis
+
+  celery:
+    restart: always
+    image: ${IMAGE_APP_TAG}
+    volumes:
+      - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
+      - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
+    command: bash -c "cd /app && celery -A apsb worker -l info"
+    env_file:
+      - .env
+    depends_on:
+      - app
+      - postgres
+      - redis
+
+  celery-beat:
+    restart: always
+    image: ${IMAGE_APP_TAG}
+    volumes:
+      - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
+      - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
+    command: bash -c "cd /app
+      && celery -A apsb beat -l error --scheduler apsb.celery:DatabaseScheduler --pidfile=celeryd.pid"
+    env_file:
+      - .env
+    depends_on:
+      - app
+      - postgres
+      - redis
+
+  flower:
+    image: mher/flower:0.9.7
+    env_file:
+      - .env
+    environment:
+      - FLOWER_PORT=$FLOWER_PORT
+    ports:
+      - ${FLOWER_HOST_PORT:?}:${FLOWER_PORT:?}
+    depends_on:
+      - celery
+      - redis
+
+volumes:
+  postgres_data:
+  redis_data:

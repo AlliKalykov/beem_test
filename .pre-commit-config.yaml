@@ -6,7 +6,7 @@ repos:
       name: Run editorconfig-checker
       alias: ec
 - repo: https://github.com/pycqa/flake8
-  rev: '7.1.1'
+  rev: '6.1.0'
   hooks:
     - id: flake8
       name: Run linter

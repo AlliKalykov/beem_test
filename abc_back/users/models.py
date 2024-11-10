@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Final
-
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
@@ -17,9 +15,6 @@ from abc_back.validators import MaxFileSizeValidator, NameValidator, validate_da
 
 from .constants import USER_AVATAR_ALLOWED_EXTENSIONS, USER_AVATAR_MAX_UPLOAD_SIZE, UserGenderChoices
 from .managers import ActiveUserManager
-
-
-TEACHBASE_AUTH_USER_UID_DEFAULT_LENGTH: Final[int] = 128
 
 
 BASE_USERS_MEDIA_FOLDER = "users"
@@ -70,9 +65,6 @@ class User(AbstractUser):
     USERNAME_FIELD = EMAIL_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    objects = UserManager()
-    active = ActiveUserManager()
-
     email = models.EmailField(
         _("email address"),
         unique=True,
@@ -115,6 +107,9 @@ class User(AbstractUser):
     )
 
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+
+    objects = UserManager()
+    active = ActiveUserManager()
 
     class Meta:
         verbose_name = "Пользователь"
