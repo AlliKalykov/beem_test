@@ -24,6 +24,8 @@ requirements.local.*
 
 /media/
 /static/
+*/media/
+*/static/
 
 *.log
 *.py[co]
@@ -31,6 +33,5 @@ requirements.local.*
 celerybeat-schedule*
 celeryd.pid
 
-docker-compose.override.yml
-docker-compose-production.yml
+docker-compose-local.yml
 local.Dockerfile

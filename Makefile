@@ -53,7 +53,7 @@ docker-build:
 
 .PHONY: docker-start
 docker-start:
-	docker-compose -f docker-compose-local.yml up -d
+	docker-compose -f docker-compose-local.yml up
 
 .PHONY: docker-down
 docker-down:
