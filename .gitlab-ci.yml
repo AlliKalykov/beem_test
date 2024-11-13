@@ -75,3 +75,26 @@ test:
         - dev
         - stage
         - prod
+
+project_build:
+    extends: .build
+    variables:
+        IMAGE_APP_TAG: ${CI_REGISTRY}/${CI_PROJECT_PATH}/abc_back:${CI_COMMIT_REF_SLUG}
+    stage: build
+    only:
+        - prod
+    script:
+        - docker build --pull -t ${IMAGE_APP_TAG} .
+        - docker push ${IMAGE_APP_TAG}
+    when: manual
+  
+project_deploy:
+    extends: .deploy
+    variables:
+        IMAGE_APP_TAG: ${CI_REGISTRY}/${CI_PROJECT_PATH}/abc_back:${CI_COMMIT_REF_SLUG}
+    stage: deploy
+    only:
+        - prod
+    script:
+        - docker-compose -f docker-compose.yml up -d
+    when: manual
