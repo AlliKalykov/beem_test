@@ -46,7 +46,7 @@ services:
     volumes:
       - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
       - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
-    command: bash -c "cd /app && celery -A apsb worker -l info"
+    command: bash -c "cd /app && celery -A abc_back worker -l info"
     env_file:
       - .env
     depends_on:
@@ -61,7 +61,7 @@ services:
       - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
       - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
     command: bash -c "cd /app
-      && celery -A apsb beat -l error --scheduler apsb.celery:DatabaseScheduler --pidfile=celeryd.pid"
+      && celery -A abc_back beat -l error --scheduler abc_back.celery:DatabaseScheduler --pidfile=celeryd.pid"
     env_file:
       - .env
     depends_on:

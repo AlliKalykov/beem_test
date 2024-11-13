@@ -1,0 +1,77 @@
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+# https://gitlab.com/gitlab-org/gitlab/-/issues/14151
+# CI: Caching outside repository seems impossible
+.ensure-pip-cache-dir: &ensure-pip-cache-dir
+  - mkdir -p ${PIP_CACHE_DIR}
+
+.pip-cache: &pip-cache
+  paths:
+    - .cache/pip
+
+lint:
+  stage: lint
+  cache:
+    <<: *pip-cache
+    key: lint-pip-cache
+  before_script:
+    - *ensure-pip-cache-dir
+    - pip install --no-deps -r requirements/requirements.lint.txt
+  script:
+    - make lint
+
+test:
+  stage: test
+  services:
+    - postgres:15-alpine
+    - redis:7-alpine
+  variables:
+    PYTHONPATH: ${CI_PROJECT_DIR}
+    DJANGO_SETTINGS_MODULE: abc_back.settings
+    DJANGO_CONFIGURATION: CI
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: 5432
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: ci-db-pass
+    POSTGRES_DB: ci-db
+    REDIS_CACHE_URL: redis://redis:6379/1
+    REDIS_BROKER_URL: redis://redis:6379/2
+  cache:
+    <<: *pip-cache
+    key: test-pip-cache
+  before_script:
+    - *ensure-pip-cache-dir
+    - pip install --no-deps -r requirements/requirements.txt -r requirements/requirements.test.txt -r requirements/requirements.dev.txt
+    - apt-get update && apt-get install -y gdal-bin
+  script:
+    - make check-migrations
+    - make test
+  needs: [lint]
+
+.build:
+    tags:
+        - docker
+    stage: build
+    script:
+        - docker build --pull -t ${IMAGE_APP_TAG} .
+        - docker push ${IMAGE_APP_TAG}
+    only:
+        - main
+        - dev
+        - stage
+        - prod
+.deploy:
+    tags:
+        - docker
+    stage: deploy
+    script:
+        - docker-compose -f docker-compose.yml up -d
+    only:
+        - main
+        - dev
+        - stage
+        - prod
