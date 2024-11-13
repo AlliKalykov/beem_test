@@ -1,9 +1,23 @@
+default:
+  image: python:3.12
+
+variables:
+  PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.cache/pip
+
 stages:
   - lint
   - test
   - build
   - deploy
 
+# https://gitlab.com/gitlab-org/gitlab/-/issues/14151
+# CI: Caching outside repository seems impossible
+.ensure-pip-cache-dir: &ensure-pip-cache-dir
+  - mkdir -p ${PIP_CACHE_DIR}
+
+.pip-cache: &pip-cache
+  paths:
+    - .cache/pip
 
 lint:
   stage: lint
@@ -71,7 +85,7 @@ project_build:
         - docker build --pull -t ${IMAGE_APP_TAG} .
         - docker push ${IMAGE_APP_TAG}
     when: manual
-  
+
 project_deploy:
     extends: .deploy
     variables:
