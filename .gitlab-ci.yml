@@ -1,5 +1,5 @@
 default:
-  image: python:3.12.3
+  image: python:3.12.6
 
 variables:
   PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.cache/pip
@@ -65,9 +65,6 @@ lint:
   image: docker:20.10.21
   services:
     - name: docker:20.10.21-dind
-      privileged: true
-      security_opt:
-        - apparmor=unconfined
   variables:
     DOCKER_HOST: tcp://docker:2375
   before_script:
