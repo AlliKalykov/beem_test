@@ -104,6 +104,4 @@ deploy-prod:
     IMAGE_APP_TAG: abc-backend-prod
     NAMESPACE: prod
   needs: ["build-prod"]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
+  when: manual
