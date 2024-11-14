@@ -64,10 +64,15 @@ lint:
   stage: build
   image: docker:20.10.21
   services:
-    - docker:20.10.21-dind
+    - name: docker:20.10.21-dind
+      privileged: true
+      security_opt:
+        - apparmor=unconfined
+  variables:
+    DOCKER_HOST: tcp://docker:2375
   before_script:
-    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
-    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
+    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=abc-backend-${CI_COMMIT_BRANCH#"release/"}; fi
+    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=abc-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
   script:
     - >-
       docker build
