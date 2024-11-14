@@ -20,6 +20,7 @@ ignore =
     DJ01
     # Field declaration should come before manager declaration
     # DJ12
+    DJ0
 per-file-ignores =
     # Variable/function name conventions
     */settings.py:N802,VNE003
