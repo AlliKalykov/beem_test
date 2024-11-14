@@ -3,7 +3,7 @@ from typing import NamedTuple, TypeVar
 from django.db.models import Model
 
 
-Id = int | str
+Id = int
 
 _Model = TypeVar("_Model", bound=Model)
 

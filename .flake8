@@ -19,8 +19,7 @@ ignore =
     # Avoid using null=True on string-based fields such CharField
     DJ01
     # Field declaration should come before manager declaration
-    # DJ12
-    DJ0
+    # DJ1
 per-file-ignores =
     # Variable/function name conventions
     */settings.py:N802,VNE003
