@@ -67,7 +67,6 @@ test:
         - docker push ${IMAGE_APP_TAG}
     only:
         - main
-        - main
         - dev
         - stage
         - prod
