@@ -60,7 +60,7 @@ test:
 
 .build:
     tags:
-        - docker
+        - projects-runner-standalone
     stage: build
     script:
         - docker build --pull -t ${IMAGE_APP_TAG} .
