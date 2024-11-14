@@ -30,6 +30,27 @@ lint:
   script:
     - make lint
 
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  cache:
+    <<: *pip-cache
+    key: build-pip-cache
+  before_script:
+    - *ensure-pip-cache-dir
+    - pip install --no-deps -r requirements/requirements.txt  # Если нужно
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" .
+    - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}"
+  only:
+    - main  # Выполнять только на главной ветке; можно поменять на нужную ветку
+
+
 #test:
 #  stage: test
 #  services:
@@ -58,66 +79,45 @@ lint:
 #    - make test
 #  needs: [lint]
 
-.build:
-  tags:
-    - projects-runner-standalone
-  stage: build
-  image: docker:20.10.21
-  services:
-    - docker:20.10.21-dind
-  before_script:
-    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
-    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
-  script:
-    - echo ${YC_KEY} | docker login --username json_key --password-stdin cr.yandex
-    - >-
-      docker build
-      --file Dockerfile .
-
-build-prod:
-  image: docker:cli
-  stage: build
-  services:
-    - docker:dind
-  variables:
-    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
-  # Default branch is also tagged with `latest`
-  script:
-    - docker build --pull -t "$DOCKER_IMAGE_NAME" .
-    - docker push "$DOCKER_IMAGE_NAME"
-    - |
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        docker tag "$DOCKER_IMAGE_NAME" "$CI_REGISTRY_IMAGE:latest"
-        docker push "$CI_REGISTRY_IMAGE:latest"
-      fi
-  # Run this job in a branch where a Dockerfile exists
-  rules:
-    - if: $CI_COMMIT_BRANCH
-      exists:
-        - Dockerfile
-
-.deploy:
-  tags:
-    - projects-runner-standalone
-  stage: deploy
-  script:
-    - docker-compose -f docker-compose.yml up -d
-  only:
-    refs:
-      - main
-      - dev
-      - stage
-      - prod
-
-deploy-prod:
-  extends: .deploy
-  environment:
-    name: prod
-  variables:
-    IMAGE_APP_TAG: abc-backend-prod
-    NAMESPACE: prod
-  stage: deploy
-  needs: ["build-prod"]
+#.build:
+#  tags:
+#    - projects-runner-standalone
+#  stage: build
+#  image: docker:20.10.21
+#  services:
+#    - docker:20.10.21-dind
+#  script:
+#    - docker build --file Dockerfile .
+#
+#build-prod:
+#  extends: .build
+#  variables:
+#    IMAGE_APP_TAG: abc-backend-prod
+#  stage: build
+#  only:
+#    refs:
+#      - main
+#
+#.deploy:
+#  tags:
+#    - projects-runner-standalone
+#  stage: deploy
+#  script:
+#    - docker-compose -f docker-compose.yml up -d
+#  only:
+#    refs:
+#      - main
+#      - dev
+#      - stage
+#      - prod
+#
+#deploy-prod:
+#  extends:
+#    - .deploy
+#  environment:
+#    name: prod
+#  variables:
+#    IMAGE_APP_TAG: abc-backend-prod
+#    NAMESPACE: prod
+#  stage: deploy
+#  needs: ["build-prod"]
