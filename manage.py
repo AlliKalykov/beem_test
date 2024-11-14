@@ -3,6 +3,7 @@ import sys
 
 
 if __name__ == "__main__":
+    print(os.environ.setdefault("DJANGO_CONFIGURATION", "Local"))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "abc_back.settings.local")
     os.environ.setdefault("DJANGO_CONFIGURATION", "Local")
 
