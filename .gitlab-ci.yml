@@ -1,5 +1,5 @@
 default:
-  image: python:3.12.6
+  image: python:3.12.3
 
 variables:
   PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.cache/pip
@@ -64,25 +64,40 @@ lint:
   stage: build
   image: docker:20.10.21
   services:
-    - name: docker:20.10.21-dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
+    - docker:20.10.21-dind
   before_script:
-    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=abc-backend-${CI_COMMIT_BRANCH#"release/"}; fi
-    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=abc-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
+    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
+    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
   script:
+    - echo ${YC_KEY} | docker login --username json_key --password-stdin cr.yandex
     - >-
       docker build
       --file Dockerfile .
 
 build-prod:
-  extends: .build
-  variables:
-    IMAGE_APP_TAG: abc-backend-prod
+  image: docker:cli
   stage: build
-  only:
-    refs:
-      - main
+  services:
+    - docker:dind
+  variables:
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
+  # Default branch is also tagged with `latest`
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_NAME" .
+    - docker push "$DOCKER_IMAGE_NAME"
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker tag "$DOCKER_IMAGE_NAME" "$CI_REGISTRY_IMAGE:latest"
+        docker push "$CI_REGISTRY_IMAGE:latest"
+      fi
+  # Run this job in a branch where a Dockerfile exists
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile
 
 .deploy:
   tags:
@@ -98,8 +113,7 @@ build-prod:
       - prod
 
 deploy-prod:
-  extends:
-    - .deploy
+  extends: .deploy
   environment:
     name: prod
   variables:
