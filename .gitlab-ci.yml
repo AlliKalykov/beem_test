@@ -42,7 +42,6 @@ build:
     key: build-pip-cache
   before_script:
     - *ensure-pip-cache-dir
-    - pip install --no-deps -r requirements/requirements.txt  # Если нужно
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
     - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" .
