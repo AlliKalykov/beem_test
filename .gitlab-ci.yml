@@ -65,6 +65,9 @@ lint:
   image: docker:20.10.21
   services:
     - docker:20.10.21-dind
+  before_script:
+    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
+    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
   script:
     - >-
       docker build
@@ -93,13 +96,13 @@ build-prod:
       - prod
 
 deploy-prod:
-  extends: .deploy
+  extends: 
+    - .deploy
   environment:
     name: prod
   variables:
     IMAGE_APP_TAG: abc-backend-prod
     NAMESPACE: prod
-  stage: deploy
   needs: ["build-prod"]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
