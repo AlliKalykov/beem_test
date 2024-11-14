@@ -65,9 +65,6 @@ lint:
   image: docker:20.10.21
   services:
     - docker:20.10.21-dind
-  before_script:
-    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
-    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
   script:
     - >-
       docker build
