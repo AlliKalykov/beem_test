@@ -1,6 +1,6 @@
 from .base import Base
-from .develop import Dev
 from .ci import CI
+from .develop import Dev
 
 
 try:
