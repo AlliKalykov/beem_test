@@ -2,6 +2,7 @@ REQUIREMENTS_DIR := requirements
 PIP_COMPILE_ARGS := --generate-hashes --allow-unsafe --no-header --no-emit-index-url --verbose
 PIP_COMPILE := cd $(REQUIREMENTS_DIR) && pip-compile $(PIP_COMPILE_ARGS)
 DJANGO_ADMIN := django-cadmin
+APP_RUN := python manage.py
 
 .PHONY: fix
 fix:
@@ -19,7 +20,7 @@ test:
 
 .PHONY: check-migrations
 check-migrations:
-	$(DJANGO_ADMIN) makemigrations --dry-run --check
+	$(APP_RUN) makemigrations --dry-run --check
 
 .PHONY: migrations
 migrations:

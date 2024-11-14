@@ -54,7 +54,7 @@ test:
     - pip install --no-deps -r requirements/requirements.txt -r requirements/requirements.test.txt -r requirements/requirements.dev.txt
     - apt-get update && apt-get install -y gdal-bin
   script:
-    - python manage.py check --dry-run --check
+    - make check-migrations
     - make test
   needs: [lint]
 
