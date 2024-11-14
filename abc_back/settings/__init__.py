@@ -1,5 +1,6 @@
 from .base import Base
 from .develop import Dev
+from .ci import CI
 
 
 try:
@@ -12,6 +13,7 @@ else:
 __all__ = [
     "Base",
     "Dev",
+    "CI",
 ]
 
 if LOCAL_CONFIGURATION_EXISTS:
