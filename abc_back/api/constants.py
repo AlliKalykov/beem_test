@@ -1,5 +1,5 @@
 import enum
-from typing import NamedTuple, Type
+from typing import NamedTuple, Optional, Type
 
 from rest_framework.exceptions import APIException, NotAuthenticated, NotFound, PermissionDenied, ValidationError
 
@@ -11,7 +11,7 @@ class _ErrorCode(NamedTuple):
     # поле detail ответа с ошибкой
     message: str
     # опциональное описание для документации, не доступно через API
-    description: str | None = None
+    description: Optional[str] = None
 
 
 class ErrorCode(_ErrorCode, enum.Enum):
@@ -48,7 +48,7 @@ class ErrorCode(_ErrorCode, enum.Enum):
         return self.value.exception_class.status_code
 
     @property
-    def description(self) -> str | None:
+    def description(self) -> Optional[str]:
         return self.value.description
 
     def __str__(self) -> str:
@@ -57,5 +57,5 @@ class ErrorCode(_ErrorCode, enum.Enum):
     def __repr__(self) -> str:
         return f"<ErrorCode.{self.code}: {self.message}>"
 
-    def as_exception(self, message: str | None = None) -> APIException:
+    def as_exception(self, message: Optional[str] = None) -> APIException:
         return self.exception_class(message or self.message, self.code)
