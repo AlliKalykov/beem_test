@@ -9,6 +9,7 @@ extend-exclude =
     */migrations/*,
     .*,
     */static/*,
+    abc_back/api/constants.py,
 ignore =
     # Line break occurred after a binary operator
     W504,
