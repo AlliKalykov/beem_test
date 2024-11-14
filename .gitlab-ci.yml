@@ -69,6 +69,7 @@ lint:
     - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
     - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
   script:
+    - echo ${YC_KEY} | docker login --username json_key --password-stdin cr.yandex
     - >-
       docker build
       --file Dockerfile .
@@ -104,4 +105,3 @@ deploy-prod:
     NAMESPACE: prod
   stage: deploy
   needs: ["build-prod"]
-  when: manual
