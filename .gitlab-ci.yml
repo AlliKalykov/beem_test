@@ -96,12 +96,12 @@ build-prod:
       - prod
 
 deploy-prod:
-  extends: 
-    - .deploy
+  extends: .deploy
   environment:
     name: prod
   variables:
     IMAGE_APP_TAG: abc-backend-prod
     NAMESPACE: prod
+  stage: deploy
   needs: ["build-prod"]
   when: manual
