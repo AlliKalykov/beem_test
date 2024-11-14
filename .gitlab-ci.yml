@@ -59,52 +59,51 @@ lint:
 #  needs: [lint]
 
 .build:
-    tags:
-        - projects-runner-standalone
-    stage: build
-    image: docker:20.10.21
-    services:
-        - docker:20.10.21-dind
-    before_script:
-        - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
-        - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
-    script:
-        - echo ${YC_KEY} | docker login --username json_key --password-stdin cr.yandex
-        - >-
-          docker build
-          --file Dockerfile
+  tags:
+    - projects-runner-standalone
+  stage: build
+  image: docker:20.10.21
+  services:
+    - docker:20.10.21-dind
+  before_script:
+    - if [[ $CI_COMMIT_BRANCH == release/* ]]; then export IMAGE_NAME=apsb-backend-${CI_COMMIT_BRANCH#"release/"}; fi
+    - if [[ $CI_COMMIT_BRANCH == partial-release/* ]]; then export IMAGE_NAME=apsb-backend-partial-${CI_COMMIT_BRANCH#"partial-release/"}; fi
+  script:
+    - >-
+      docker build
+      --file Dockerfile .
 
 build-prod:
-    extends:
-        - .build
-    variables:
-        IMAGE_APP_TAG: abc-backend-prod
-    stage: build
-    only:
-        refs:
-            - main
+  extends: .build
+  variables:
+    IMAGE_APP_TAG: abc-backend-prod
+  stage: build
+  only:
+    refs:
+      - main
 
 .deploy:
-    tags:
-        - projects-runner-standalone
-    stage: deploy
-    script:
-        - docker-compose -f docker-compose.yml up -d
-    only:
-        - main
-        - dev
-        - stage
-        - prod
+  tags:
+    - projects-runner-standalone
+  stage: deploy
+  script:
+    - docker-compose -f docker-compose.yml up -d
+  only:
+    refs:
+      - main
+      - dev
+      - stage
+      - prod
 
 deploy-prod:
-    extends: .deploy
-    environment:
-      name: prod
-    variables:
-        IMAGE_APP_TAG: abc-backend-prod
-        NAMESPASE: prod
-    stage: deploy
-    needs: ["build-prod"]
-    rules:
-        - if: $CI_COMMIT_BRANCH == "main"
-          when: manual
+  extends: .deploy
+  environment:
+    name: prod
+  variables:
+    IMAGE_APP_TAG: abc-backend-prod
+    NAMESPACE: prod
+  stage: deploy
+  needs: ["build-prod"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
