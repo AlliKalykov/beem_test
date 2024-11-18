@@ -30,42 +30,42 @@ lint:
   script:
     - make lint
 
-build:
-  stage: build
-  image: gcr.io/kaniko-project/executor:v1.23.2-debug
-  script:
-    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
-  only:
-    - main
+# build:
+#   stage: build
+#   image: gcr.io/kaniko-project/executor:v1.23.2-debug
+#   script:
+#     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+#     - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+#   only:
+#     - main
 
-#test:
-#  stage: test
-#  services:
-#    - postgres:15-alpine
-#    - redis:7-alpine
-#  variables:
-#    PYTHONPATH: ${CI_PROJECT_DIR}
-#    DJANGO_SETTINGS_MODULE: abc_back.settings
-#    DJANGO_CONFIGURATION: CI
-#    POSTGRES_HOST: postgres
-#    POSTGRES_PORT: 5432
-#    POSTGRES_USER: postgres
-#    POSTGRES_PASSWORD: ci-db-pass
-#    POSTGRES_DB: ci-db
-#    REDIS_CACHE_URL: redis://redis:6379/1
-#    REDIS_BROKER_URL: redis://redis:6379/2
-#  cache:
-#    <<: *pip-cache
-#    key: test-pip-cache
-#  before_script:
-#    - *ensure-pip-cache-dir
-#    - pip install --no-deps -r requirements/requirements.txt -r requirements/requirements.test.txt -r requirements/requirements.dev.txt
-#    - apt-get update && apt-get install -y gdal-bin
-#  script:
-#    - make check-migrations
-#    - make test
-#  needs: [lint]
+test:
+ stage: test
+ services:
+   - postgres:15-alpine
+   - redis:7-alpine
+ variables:
+   PYTHONPATH: ${CI_PROJECT_DIR}
+   DJANGO_SETTINGS_MODULE: abc_back.settings
+   DJANGO_CONFIGURATION: CI
+   POSTGRES_HOST: postgres
+   POSTGRES_PORT: 5432
+   POSTGRES_USER: postgres
+   POSTGRES_PASSWORD: ci-db-pass
+   POSTGRES_DB: ci-db
+   REDIS_CACHE_URL: redis://redis:6379/1
+   REDIS_BROKER_URL: redis://redis:6379/2
+ cache:
+   <<: *pip-cache
+   key: test-pip-cache
+ before_script:
+   - *ensure-pip-cache-dir
+   - pip install --no-deps -r requirements/requirements.txt -r requirements/requirements.test.txt -r requirements/requirements.dev.txt
+   - apt-get update && apt-get install -y gdal-bin
+ script:
+   - make check-migrations
+   - make test
+ needs: [lint]
 
 #.build:
 #  tags:
