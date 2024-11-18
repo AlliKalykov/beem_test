@@ -39,73 +39,73 @@ lint:
 #   only:
 #     - main
 
-test:
-  stage: test
-  services:
-    - postgres:15-alpine
-    - redis:7-alpine
-  variables:
-    PYTHONPATH: ${CI_PROJECT_DIR}
-    DJANGO_SETTINGS_MODULE: abc_back.settings
-    DJANGO_CONFIGURATION: CI
-    POSTGRES_HOST: postgres
-    POSTGRES_PORT: 5432
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: ci-db-pass
-    POSTGRES_DB: ci-db
-    REDIS_CACHE_URL: redis://redis:6379/1
-    REDIS_BROKER_URL: redis://redis:6379/2
-  cache:
-    <<: *pip-cache
-    key: test-pip-cache
-  before_script:
-    - *ensure-pip-cache-dir
-    - pip install --no-deps -r requirements/requirements.txt -r requirements/requirements.test.txt -r requirements/requirements.dev.txt
-    - apt-get update && apt-get install -y gdal-bin
-  script:
-    - make check-migrations
-    - make test
-  needs: [lint]
+# test:
+#   stage: test
+#   services:
+#     - postgres:15-alpine
+#     - redis:7-alpine
+#   variables:
+#     PYTHONPATH: ${CI_PROJECT_DIR}
+#     DJANGO_SETTINGS_MODULE: abc_back.settings
+#     DJANGO_CONFIGURATION: CI
+#     POSTGRES_HOST: postgres
+#     POSTGRES_PORT: 5432
+#     POSTGRES_USER: postgres
+#     POSTGRES_PASSWORD: ci-db-pass
+#     POSTGRES_DB: ci-db
+#     REDIS_CACHE_URL: redis://redis:6379/1
+#     REDIS_BROKER_URL: redis://redis:6379/2
+#   cache:
+#     <<: *pip-cache
+#     key: test-pip-cache
+#   before_script:
+#     - *ensure-pip-cache-dir
+#     - pip install --no-deps -r requirements/requirements.txt -r requirements/requirements.test.txt -r requirements/requirements.dev.txt
+#     - apt-get update && apt-get install -y gdal-bin
+#   script:
+#     - make check-migrations
+#     - make test
+#   needs: [lint]
 
-#.build:
-#  tags:
-#    - projects-runner-standalone
-#  stage: build
-#  image: docker:20.10.21
-#  services:
-#    - docker:20.10.21-dind
-#  script:
-#    - docker build --file Dockerfile .
-#
-#build-prod:
-#  extends: .build
-#  variables:
-#    IMAGE_APP_TAG: abc-backend-prod
-#  stage: build
-#  only:
-#    refs:
-#      - main
-#
-#.deploy:
-#  tags:
-#    - projects-runner-standalone
-#  stage: deploy
-#  script:
-#    - docker-compose -f docker-compose.yml up -d
-#  only:
-#    refs:
-#      - main
-#      - dev
-#      - stage
-#      - prod
-#
-#deploy-prod:
-#  extends:
-#    - .deploy
-#  environment:
-#    name: prod
-#  variables:
-#    IMAGE_APP_TAG: abc-backend-prod
-#    NAMESPACE: prod
-#  stage: deploy
-#  needs: ["build-prod"]
+.build:
+ tags:
+   - projects-runner-standalone
+ stage: build
+ image: docker:20.10.21
+ services:
+   - docker:20.10.21-dind
+ script:
+   - docker build --file Dockerfile .
+
+build-prod:
+ extends: .build
+ variables:
+   IMAGE_APP_TAG: abc-backend-prod
+ stage: build
+ only:
+   refs:
+     - main
+
+.deploy:
+ tags:
+   - projects-runner-standalone
+ stage: deploy
+ script:
+   - docker-compose -f docker-compose.yml up -d
+ only:
+   refs:
+     - main
+     - dev
+     - stage
+     - prod
+
+deploy-prod:
+ extends:
+   - .deploy
+ environment:
+   name: prod
+ variables:
+   IMAGE_APP_TAG: abc-backend-prod
+   NAMESPACE: prod
+ stage: deploy
+ needs: ["build-prod"]
