@@ -25,7 +25,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dev.Dockerfile
     image: abc-back:latest
     env_file:
       - .env
@@ -36,6 +36,7 @@ services:
       - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
     command: >
       bash -c "cd /app
+      && ls -la
       && python manage.py migrate
       && python manage.py collectstatic --no-input
       && gunicorn -c conf/gunicorn/config.py"

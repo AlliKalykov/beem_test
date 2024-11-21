@@ -52,8 +52,6 @@ class Base(Configuration):
 
         "django_celery_beat",
 
-        "debug_toolbar",
-
         "abc_back.users.apps.UsersConfig",
     ]
 
@@ -68,8 +66,6 @@ class Base(Configuration):
         "django.contrib.auth.middleware.AuthenticationMiddleware",
         "django.contrib.messages.middleware.MessageMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
 
     ROOT_URLCONF = "abc_back.urls"

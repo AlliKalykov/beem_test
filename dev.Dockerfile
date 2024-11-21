@@ -9,6 +9,8 @@ WORKDIR /app
 COPY ./requirements/requirements.txt requirements.txt
 COPY abc_back ./abc_back
 COPY conf ./conf
+COPY manage.py .
+COPY .env .
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \

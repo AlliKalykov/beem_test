@@ -68,9 +68,6 @@ class User(AbstractUser):
     email = models.EmailField(
         _("email address"),
         unique=True,
-        db_collation=(
-            None if settings.DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3" else "case_insensitive"
-        ),
         error_messages={
             "unique": "Пользователь с таким email адресом уже зарегистрирован.",
             "invalid": "Пожалуйста, введите корректный email.",
