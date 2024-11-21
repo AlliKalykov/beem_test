@@ -46,7 +46,9 @@ services:
 
   celery:
     restart: always
-    build: .
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     image: abc-back:latest
     volumes:
       - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
@@ -61,7 +63,9 @@ services:
 
   celery-beat:
     restart: always
-    build: .
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     image: abc-back:latest
     volumes:
       - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
