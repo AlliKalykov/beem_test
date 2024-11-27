@@ -24,3 +24,12 @@ class TimestampedModelMixin(CreatedAtModelMixin, UpdatedAtModelMixin):
 
     class Meta:
         abstract = True
+
+
+class PublishedModelMixin(models.Model):
+    """Миксин для отслеживания публикации объекта."""
+
+    is_published = models.BooleanField(verbose_name="опубликован", default=False)
+
+    class Meta:
+        abstract = True

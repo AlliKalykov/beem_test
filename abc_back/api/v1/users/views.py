@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
 from django.contrib.auth import authenticate, login
-from django.core.mail import EmailMessage
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -98,7 +97,7 @@ class ProfileViewSet(
 
     @openapi.update_email_confirm
     @action(methods=["POST"], detail=False, url_path="email/confirm")
-    def update_email_confirm(
+    def email_confirm(
         self,
         request: Request,
         email_otp_service: EmailOTPService = Provide[Container.user_package.email_otp_service],
@@ -197,18 +196,14 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
     def register(
         self, request: Request,
         user_service: UserService = Provide[Container.user_package.user_service],
+        email_otp_service: EmailOTPService = Provide[Container.user_package.email_otp_service],
     ) -> Response:
         """Регистрация пользователя."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
         password = serializer.validated_data["password"]
-        mail = EmailMessage(
-            subject="Подтверждение регистрации",
-            body=f"Ваш email: {email}",
-            to=[email],
-        )
-        mail.send()
+        email_otp_service.create_token(email)
         user = user_service.create_user(email=email, password=password)
         if not user:
             raise ErrorCode.EMAIL_ALREADY_TAKEN.as_exception()

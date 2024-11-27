@@ -16,7 +16,7 @@ from abc_back.logging import LoggerDescriptor
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env(env_file=".env")
+environ.Env.read_env(env_file=".env.old")
 
 
 class Base(Configuration):
@@ -53,6 +53,7 @@ class Base(Configuration):
         "django_celery_beat",
 
         "abc_back.users.apps.UsersConfig",
+        "abc_back.products.apps.ProductsConfig",
     ]
 
     MIDDLEWARE = [
@@ -162,7 +163,7 @@ class Base(Configuration):
         "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
         "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
         "EXCEPTION_HANDLER": "abc_back.sentry_exception_handler.sentry_exception_handler",
-        "REST_FRAMEWORK_TOKEN_EXPIRE_DAYS": 7,  # TODO: добавить в .env?
+        "REST_FRAMEWORK_TOKEN_EXPIRE_DAYS": 7,  # TODO: добавить в .env.old?
     }
 
     ACCESS_TOKEN_LIFETIME = env("ACCESS_TOKEN_LIFETIME", default=5)

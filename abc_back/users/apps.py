@@ -3,7 +3,8 @@ from django.apps import AppConfig
 
 class UsersConfig(AppConfig):
     name = "abc_back.users"
-    verbose_name = "Пользователи"
+    verbose_name = "Пользователь"
+    verbose_name_plural = "Пользователи"
 
     def ready(self):
         from abc_back import container
