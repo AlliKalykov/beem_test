@@ -4,6 +4,7 @@ from abc_back.mixins import PublishedModelMixin, TimestampedModelMixin
 from abc_back.utils import generate_filename
 
 from .constants import SizeType
+from .managers import ActiveProductManager
 
 
 BASE_PRODUCTS_MEDIA_FOLDER = "products"
@@ -84,6 +85,9 @@ class Product(TimestampedModelMixin, PublishedModelMixin):
     use = models.TextField("Применение/Использование", blank=True, null=True)
     ingredient = models.TextField("Состав", blank=True, null=True)
     additional = models.TextField("Дополнение", blank=True, null=True)
+
+    objects = models.Manager()
+    active = ActiveProductManager()
 
     class Meta:
         verbose_name = "Товар"

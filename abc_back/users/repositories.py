@@ -1,5 +1,4 @@
 from django.db.models import QuerySet
-from django.db.models.query import FlatValuesListIterable, ValuesIterable
 
 from abc_back.exceptions import NotFoundError
 from abc_back.types import Id
@@ -35,16 +34,6 @@ class UserRepository:
         except User.DoesNotExist:
             raise NotFoundError
         return user
-
-    def get_active_ids(self, *, flat: bool = False) -> ValuesIterable | FlatValuesListIterable:
-        """Получение ID активных пользователей.
-
-        Возвращается и ID проекта `pk`, и ID из TB `tb_id`.
-        """
-        qs = User.active.values("pk", "tb_id")
-        if flat:
-            qs = User.active.values_list("id", flat=True)
-        return qs
 
     def create_user(self, email: str, password: str) -> User | None:
         """Создание пользователя."""

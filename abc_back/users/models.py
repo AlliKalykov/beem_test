@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -13,7 +11,7 @@ from abc_back.utils import generate_filename
 from abc_back.validators import MaxFileSizeValidator, NameValidator, validate_date_of_birth, validate_email
 
 from .constants import USER_AVATAR_ALLOWED_EXTENSIONS, USER_AVATAR_MAX_UPLOAD_SIZE, UserGenderChoices
-from .managers import ActiveUserManager
+from .managers import ActiveUserManager, UserManager
 
 
 BASE_USERS_MEDIA_FOLDER = "users"
@@ -22,39 +20,6 @@ BASE_USERS_MEDIA_FOLDER = "users"
 def user_avatar_upload_to(instance, filename) -> str:
     new_filename = generate_filename(filename)
     return f"{BASE_USERS_MEDIA_FOLDER}/avatar/{new_filename}"
-
-
-class UserManager(BaseUserManager):
-    use_in_migrations = True
-
-    def _create_user(self, email, password, **extra_fields):
-        """Creates and saves a User with the given email and password."""
-        if not email:
-            raise ValueError("The given email must be set")
-        try:
-            user = self.model(email=email, **extra_fields)
-            user.set_password(password)
-        except AttributeError:
-            user = self.model(email=email, password=make_password(password), **extra_fields)
-            user._password = password
-        user.save(using=self._db)
-        return user
-
-    def create_user(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", False)
-        extra_fields.setdefault("is_superuser", False)
-        return self._create_user(email, password, **extra_fields)
-
-    def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-
-        return self._create_user(email, password, **extra_fields)
 
 
 class User(AbstractUser):

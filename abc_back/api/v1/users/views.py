@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 from dependency_injector.wiring import Provide, inject
@@ -17,6 +16,7 @@ from abc_back.api.serializers import EmptySerializer
 from abc_back.api.v1.users.serializers import ProfileEditSerializer, ProfileInfoSerializer
 from abc_back.api.views import MultiSerializerViewSetMixin, MultiThrottllesViewSetMixin
 from abc_back.containers import Container
+from abc_back.exceptions import BadRequestError
 from abc_back.users.models import User
 
 
@@ -67,7 +67,7 @@ class ProfileViewSet(
         """Изменение данных профиля."""
         serializer = self.get_serializer(self.request.user, data=self.request.data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
+            return Response(serializer.errors, status=BadRequestError)
         user_service.update_user_by_id(request.user.pk, **serializer.validated_data)
         return Response(serializer.data)
 
