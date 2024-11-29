@@ -1,6 +1,5 @@
 services:
-  postgres:
-    restart: always
+  db-dev:
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?}
@@ -9,24 +8,22 @@ services:
     ports:
       - "5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_data_dev:/var/lib/postgresql/data/
 
-  redis:
-    restart: always
+  redis-dev:
     image: redis:7-alpine
     ports:
-      - "6379"
+      - "6379:6379"
     volumes:
-      - redis_data:/data
+      - redis_data_dev:/data
     depends_on:
-      - postgres
+      - db-dev
 
   app:
-    restart: always
     build:
       context: .
       dockerfile: dev.Dockerfile
-    image: abc-back:latest
+    image: abc-back-dev:latest
     env_file:
       - .env
     ports:
@@ -41,15 +38,14 @@ services:
       && python manage.py collectstatic --no-input
       && gunicorn -c conf/gunicorn/config.py"
     depends_on:
-      - postgres
-      - redis
+      - db-dev
+      - redis-dev
 
   celery:
-    restart: always
     build:
       context: .
       dockerfile: dev.Dockerfile
-    image: abc-back:latest
+    image: abc-back-dev:latest
     volumes:
       - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
       - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
@@ -58,15 +54,14 @@ services:
       - .env
     depends_on:
       - app
-      - postgres
-      - redis
+      - db-dev
+      - redis-dev
 
   celery-beat:
-    restart: always
     build:
       context: .
       dockerfile: dev.Dockerfile
-    image: abc-back:latest
+    image: abc-back-dev:latest
     volumes:
       - ${APP_SERVER_HOST_STATIC_PATH:?}:/app/static
       - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
@@ -76,8 +71,8 @@ services:
       - .env
     depends_on:
       - app
-      - postgres
-      - redis
+      - db-dev
+      - redis-dev
 
   flower:
     image: mher/flower:0.9.7
@@ -89,8 +84,8 @@ services:
       - ${FLOWER_HOST_PORT:?}:${FLOWER_PORT:?}
     depends_on:
       - celery
-      - redis
+      - redis-dev
 
 volumes:
-  postgres_data:
-  redis_data:
+  postgres_data_dev:
+  redis_data_dev:

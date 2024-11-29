@@ -16,14 +16,14 @@ from abc_back.logging import LoggerDescriptor
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env(env_file=".env.old")
+environ.Env.read_env(env_file=".env")
 
 
 class Base(Configuration):
     log = LoggerDescriptor(__name__)
 
     PROJECT_NAME = "ABC Concierge"
-    PROJECT_BASE_URL = env("PROJECT_BASE_URL", default="http://localhost:7000")
+    PROJECT_BASE_URL = env("PROJECT_BASE_URL", default="http://localhost:8000")
     PROJECT_ENVIRONMENT = env("PROJECT_ENVIRONMENT", default="Production")
 
     DJANGO_CONFIGURATION = env("DJANGO_CONFIGURATION", default="Dev")
@@ -163,7 +163,7 @@ class Base(Configuration):
         "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
         "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
         "EXCEPTION_HANDLER": "abc_back.sentry_exception_handler.sentry_exception_handler",
-        "REST_FRAMEWORK_TOKEN_EXPIRE_DAYS": 7,  # TODO: добавить в .env.old?
+        "REST_FRAMEWORK_TOKEN_EXPIRE_DAYS": 7,  # TODO: добавить в .env.dev?
     }
 
     ACCESS_TOKEN_LIFETIME = env("ACCESS_TOKEN_LIFETIME", default=5)

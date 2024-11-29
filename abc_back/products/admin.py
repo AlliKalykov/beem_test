@@ -32,9 +32,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Color)
 class ColorAdmin(admin.ModelAdmin):
-    list_display = ("color", "description")
-    list_display_links = ("color",)
-    search_fields = ("color",)
+    list_display = ("name", "hex_code", "description")
+    list_display_links = ("name",)
+    search_fields = ("name", "hex_code")
 
 
 @admin.register(Size)
@@ -53,6 +53,7 @@ class ProductAdmin(admin.ModelAdmin):
     filter_horizontal = ("category",)
     inlines = [SubProductInline]
 
+    @admin.display(description="Категории")
     def get_categories(self, obj):
         categories = obj.category.values_list("name", flat=True)
-        return f"<a href='{obj.get_absolute_url()}'>{', '.join(categories)}</a>"
+        return f"{', '.join(categories)}"

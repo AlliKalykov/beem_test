@@ -203,7 +203,7 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
         password = serializer.validated_data["password"]
-        email_otp_service.create_token(email)
+        # email_otp_service.create_token(serializer.data)
         user = user_service.create_user(email=email, password=password)
         if not user:
             raise ErrorCode.EMAIL_ALREADY_TAKEN.as_exception()

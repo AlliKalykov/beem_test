@@ -9,3 +9,6 @@ class ProductContainer(containers.DeclarativeContainer):
     product_repository = providers.Singleton(
         repositories.ProductRepository,
     )
+    category_repository = providers.Singleton(
+        repositories.CategoryRepository,
+    )

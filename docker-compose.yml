@@ -28,7 +28,7 @@ services:
       dockerfile: Dockerfile
     image: abc-back:latest
     env_file:
-      - .env.old
+      - .env.dev
     ports:
       - ${APP_SERVER_HOST_PORT:?}:8000
     volumes:
@@ -55,7 +55,7 @@ services:
       - ${APP_SERVER_HOST_MEDIA_PATH:?}:/app/media
     command: bash -c "cd /app && celery -A abc_back worker -l info"
     env_file:
-      - .env.old
+      - .env.dev
     depends_on:
       - app
       - postgres
@@ -73,7 +73,7 @@ services:
     command: bash -c "cd /app
       && celery -A abc_back beat -l error --scheduler abc_back.celery:DatabaseScheduler --pidfile=celeryd.pid"
     env_file:
-      - .env.old
+      - .env.dev
     depends_on:
       - app
       - postgres
@@ -82,7 +82,7 @@ services:
   flower:
     image: mher/flower:0.9.7
     env_file:
-      - .env.old
+      - .env.dev
     environment:
       - FLOWER_PORT=$FLOWER_PORT
     ports:

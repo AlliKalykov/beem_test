@@ -1,7 +1,7 @@
 from django.db.models import QuerySet
 
 from abc_back.exceptions import NotFoundError
-from abc_back.products.models import Product
+from abc_back.products.models import Category, Product
 from abc_back.types import Id
 
 
@@ -10,7 +10,7 @@ class ProductRepository:
 
     def get_active(self) -> QuerySet[Product]:
         """Получение активных пользователей."""
-        return Product.objects.filter(is_active=True, tb_id__isnull=False)
+        return Product.objects.filter(is_active=True)
 
     def get_by_pk(self, product_pk: Id, /, *, active: bool = False) -> Product:
         """Получение пользователя по ID."""
@@ -34,3 +34,30 @@ class ProductRepository:
         except Product.DoesNotExist:
             raise NotFoundError
         return product
+
+
+class CategoryRepository:
+    """Репозиторий для работы с данными пользователей."""
+
+    def get_by_pk(self, category_pk: Id) -> Category:
+        """Получение пользователя по ID."""
+        try:
+            category = Category.objects.get(pk=category_pk).prefetch_related("children")
+        except Category.DoesNotExist:
+            raise NotFoundError
+        return category
+
+    def get_by_pks(self, category_pks: list[Id]) -> QuerySet[Category]:
+        """Получение пользователей по списку ID."""
+        return Category.objects.filter(pk__in=category_pks)
+
+    def get_by_slug(self, slug: str) -> Category:
+        """Получение пользователя по почте."""
+        try:
+            category = Category.objects.get(slug=slug).prefetch_related("children")
+        except Category.DoesNotExist:
+            raise NotFoundError
+        return category
+
+    def get_featured(self) -> QuerySet[Category]:
+        return Category.objects.filter(is_featured=True).prefetch_related("children")

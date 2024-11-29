@@ -25,6 +25,11 @@ def sub_product_image_upload_to(instance, filename) -> str:
     return f"{BASE_PRODUCTS_MEDIA_FOLDER}/sub_product/images/{new_filename}"
 
 
+def brand_logo_upload_to(instance, filename) -> str:
+    new_filename = generate_filename(filename)
+    return f"{BASE_PRODUCTS_MEDIA_FOLDER}/brand/logo/{new_filename}"
+
+
 class Category(PublishedModelMixin):
 
     is_featured = models.BooleanField(
@@ -37,7 +42,9 @@ class Category(PublishedModelMixin):
         help_text="Если категория является подкатегорией, выберите родительскую категорию",
     )
     name = models.CharField("Название", max_length=255, unique=True, db_index=True)
-    slug = models.SlugField("Слаг", max_length=255, unique=True, help_text="Короткое название для URL")
+    slug = models.SlugField("Слаг", db_index=True, unique=True, max_length=255, help_text="Короткое название для URL")
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Категория"
@@ -46,11 +53,33 @@ class Category(PublishedModelMixin):
     def __str__(self):
         return f"{self.name}"
 
+    def get_absolute_url(self):
+        """Возвращает абсолютный URL для категории."""
+        from django.urls import reverse
+        return reverse("category_detail", kwargs={"slug": self.slug})
+
+    def get_children(self):
+        """Возвращает дочерние категории."""
+        return self.children.filter(is_active=True)
+
+    def is_root(self):
+        """Проверяет, является ли категория корневой."""
+        return self.parent is None
+
+    def get_category_line(self):
+        root = self
+        category_line = [root]
+        while root.parent:
+            root = root.parent
+            category_line.append(root)
+        return category_line
+
 
 class Brand(PublishedModelMixin):
 
     name = models.CharField("Название", max_length=255, unique=True, db_index=True)
     slug = models.SlugField("Слаг", max_length=255, unique=True, help_text="Короткое название для URL")
+    logo = models.FileField("Логотип", upload_to=brand_logo_upload_to, blank=True, null=True)
     description = models.TextField("Описание", blank=True, null=True)
 
     class Meta:
@@ -81,6 +110,8 @@ class Product(TimestampedModelMixin, PublishedModelMixin):
         "Рекомендация", default=False, help_text="Товар является рекомендацией магазина",
     )
 
+    is_active = models.BooleanField("Активность", default=True)
+
     description = models.TextField("Описание", blank=True, null=True)
     use = models.TextField("Применение/Использование", blank=True, null=True)
     ingredient = models.TextField("Состав", blank=True, null=True)
@@ -96,10 +127,17 @@ class Product(TimestampedModelMixin, PublishedModelMixin):
     def __str__(self):
         return f"{self.name}"
 
+    @property
+    def categories(self):
+        return [
+            category.get_category_line() for category in self.category.all()
+        ]
+
 
 class Color(models.Model):
 
-    color = models.CharField("Цвет", max_length=24, unique=True)
+    name = models.CharField("Цвет", max_length=24, unique=True)
+    hex_code = models.CharField("Шестнадцатеричный код", max_length=24, unique=True)
     description = models.TextField("Описание", blank=True, null=True)
 
     class Meta:
@@ -107,7 +145,7 @@ class Color(models.Model):
         verbose_name_plural = "Цвета"
 
     def __str__(self):
-        return f"{self.color}"
+        return f"{self.name}"
 
 
 class Size(models.Model):
