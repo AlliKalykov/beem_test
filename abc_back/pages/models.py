@@ -25,3 +25,37 @@ class AboutUs(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class GiftCertificate(models.Model):
+    main_poster = models.FileField("Постер", upload_to=file_upload_to, blank=True, null=True)
+    title = models.TextField("Заголовок")
+    subtext = models.TextField("Подтекст")
+    email = models.EmailField("Электронная почта", max_length=255, upload_to=file_upload_to, blank=True, null=True)
+    phone = models.CharField("Номер телефона", max_length=20, upload_to=file_upload_to, blank=True, null=True)
+    whatsapp = models.CharField("", max_length=255, upload_to=file_upload_to, blank=True, null=True)
+    telegram = models.CharField("", max_length=255, upload_to=file_upload_to, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "О нас"
+        verbose_name_plural = "О нас"
+
+    def __str__(self):
+        return self.title
+
+
+class Delivery(models.Model):
+    title = models.TextField("Заголовок")
+    main_poster = models.FileField("Постер")
+    text = models.TextField("Текст")
+    email = models.EmailField("Электронная почта", max_length=255, upload_to=file_upload_to, blank=True, null=True)
+    phone = models.CharField("Номер телефона", max_length=20, upload_to=file_upload_to, blank=True, null=True)
+    whatsapp = models.CharField("", max_length=255, upload_to=file_upload_to, blank=True, null=True)
+    telegram = models.CharField("", max_length=255, upload_to=file_upload_to, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "О нас"
+        verbose_name_plural = "О нас"
+
+    def __str__(self):
+        return self.title
