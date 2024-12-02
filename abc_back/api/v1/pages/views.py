@@ -4,7 +4,7 @@ from rest_framework import mixins, viewsets
 
 from abc_back.api.views import MultiSerializerViewSetMixin
 
-from .serializers import AboutUsSerializer, DeliverySerializer
+from .serializers import AboutUsSerializer, DeliverySerializer, GiftCertificateSerializer
 
 
 class AboutUsViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet, mixins.RetrieveModelMixin):
@@ -15,10 +15,20 @@ class AboutUsViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet, mixin
         "retrieve": AboutUsSerializer,
     }
 
+
 class DeliveryViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     queryset = DeliverySerializer.Meta.model.objects.all()
     permission_classes = []
 
     serializer_classes = {
         "retrieve": DeliverySerializer,
+    }
+
+
+class GiftCertificateViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+    queryset = GiftCertificateSerializer.Meta.model.objects.all()
+    permission_classes = []
+
+    serializer_classes = {
+        "retrieve": GiftCertificateSerializer,
     }

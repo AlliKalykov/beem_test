@@ -42,3 +42,20 @@ class Delivery(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class GiftCertificate(models.Model):
+    main_poster = models.FileField("Постер")
+    title = models.TextField("Заголовок")
+    subtext = models.TextField("Подтекст")
+    email = models.EmailField("Электронная почта", max_length=255)
+    phone = models.CharField("Номер телефона", max_length=20)
+    whatsapp = models.CharField("WhatsApp номер", max_length=255)
+    telegram = models.CharField("Telegram номер", max_length=255)
+
+    class Meta:
+        verbose_name = "Подарочный сертификат"
+        verbose_name_plural = "Подарочный сертификат"
+
+    def __str__(self):
+        return self.title
