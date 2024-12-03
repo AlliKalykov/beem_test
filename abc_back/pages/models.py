@@ -29,7 +29,7 @@ class AboutUs(models.Model):
 
 class Delivery(models.Model):
     title = models.TextField("Заголовок")
-    main_poster = models.FileField("Постер")
+    main_poster = models.FileField("Постер", upload_to=file_upload_to, blank=True, null=True)
     text = models.TextField("Текст")
     email = models.EmailField("Электронная почта", max_length=255)
     phone = models.CharField("Номер телефона", max_length=20)
@@ -45,7 +45,7 @@ class Delivery(models.Model):
 
 
 class GiftCertificate(models.Model):
-    main_poster = models.FileField("Постер")
+    main_poster = models.FileField("Постер", upload_to=file_upload_to, blank=True, null=True)
     title = models.TextField("Заголовок")
     subtext = models.TextField("Подтекст")
     email = models.EmailField("Электронная почта", max_length=255)
