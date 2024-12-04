@@ -6,6 +6,7 @@ from dependency_injector.wiring import Provide, inject
 from django.contrib.auth import authenticate, login
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -47,6 +48,7 @@ class ProfileViewSet(
         "update_email_request": [EmailOTPCreateThrottle],
         "update_email_confirm": [EmailOTPValidationThrottle],
     }
+    permission_classes = [IsAuthenticated]
 
     @openapi.profile_info
     @action(detail=False, methods=["GET"], url_path="info")
@@ -130,6 +132,7 @@ class EmailOTPTokenViewSet(
         "create": [EmailOTPCreateThrottle],
         "validate": [EmailOTPValidationThrottle],
     }
+    permission_classes = [IsAuthenticated]
 
     @inject
     def create(
@@ -166,9 +169,10 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
         "login": LoginSerializer,
         "register": RegisterSerializer,
     }
+    permission_classes = []
 
     @openapi.login
-    @action(methods=["POST"], detail=False, permission_classes=[])
+    @action(methods=["POST"], detail=False)
     def login(
         self,
         request: Request,
@@ -192,7 +196,7 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
         raise exceptions.AuthenticationFailed()
 
     @openapi.register
-    @action(methods=["POST"], detail=False, permission_classes=[])
+    @action(methods=["POST"], detail=False)
     def register(
         self, request: Request,
         user_service: UserService = Provide[Container.user_package.user_service],
