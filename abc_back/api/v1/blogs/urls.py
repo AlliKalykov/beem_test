@@ -1,8 +1,8 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-
 from .views import CategoryViewSet, PostViewSet
+
 
 app_name = "blogs"
 manager_calendar_base_name = "blogs"
