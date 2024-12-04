@@ -55,6 +55,7 @@ class Base(Configuration):
         "abc_back.users.apps.UsersConfig",
         "abc_back.products.apps.ProductsConfig",
         "abc_back.pages.apps.PagesConfig",
+        "abc_back.blogs.apps.BlogsConfig",
     ]
 
     MIDDLEWARE = [
@@ -156,7 +157,7 @@ class Base(Configuration):
             "rest_framework_simplejwt.authentication.JWTAuthentication",
         ],
         "DEFAULT_PERMISSION_CLASSES": [
-            "rest_framework.permissions.IsAuthenticated",
+            "rest_framework.permissions.AllowAny",
         ],
         "DEFAULT_FILTER_BACKENDS": [
             "django_filters.rest_framework.DjangoFilterBackend",
