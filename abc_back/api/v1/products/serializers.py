@@ -8,7 +8,7 @@ class CategoryShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("id", "name", "is_featured", "parent")
+        fields = ("id", "name", "slug", "is_featured", "parent")
 
 
 class RecursiveCategorySerializer(serializers.Serializer):
@@ -19,14 +19,14 @@ class RecursiveCategorySerializer(serializers.Serializer):
         return serializer.data
 
 
-class ParentCategorySerializer(serializers.ModelSerializer):
+class ParentCategorySerializer(CategoryShortSerializer):
     """Сериализатор для категорий с иерархией от нижнего уровня до корня."""
 
     parent = serializers.SerializerMethodField()
 
-    class Meta:
+    class Meta(CategoryShortSerializer.Meta):
         model = Category
-        fields = ("id", "name", "slug", "is_featured", "parent")
+        fields = CategoryShortSerializer.Meta.fields
 
     def get_parent(self, obj):
         if not obj.parent:
@@ -34,14 +34,14 @@ class ParentCategorySerializer(serializers.ModelSerializer):
         return ParentCategorySerializer(obj.parent, context=self.context).data
 
 
-class CategoryTreeSerializer(serializers.ModelSerializer):
+class CategoryTreeSerializer(CategoryShortSerializer):
     """Сериализатор для отображения всех категорий в виде дерева."""
 
     children = RecursiveCategorySerializer(many=True, read_only=True)
 
-    class Meta:
+    class Meta(CategoryShortSerializer.Meta):
         model = Category
-        fields = ("id", "name", "is_featured", "children")
+        fields = CategoryShortSerializer.Meta.fields + ("children",)
 
 
 class ColorSerializer(serializers.ModelSerializer):
@@ -68,6 +68,25 @@ class SubProductShortSerializer(serializers.ModelSerializer):
         fields = ("id", "slug", "product", "size", "color", "stock", "is_available", "final_price")
 
 
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = (
+            "id", "name", "slug", "poster", "brand", "category", "is_novelty", "is_bestseller", "is_back_in_stock",
+            "is_recommendation", "description", "use", "ingredient", "additional", "is_active",
+        )
+
+
+class ProductUpdateSerializer(ProductSerializer):
+    name = serializers.CharField(required=False)
+    slug = serializers.CharField(required=False)
+    brand = serializers.PrimaryKeyRelatedField(queryset=Brand.objects.all(), required=False)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), required=False, many=True)
+
+    class Meta(ProductSerializer.Meta):
+        fields = ProductSerializer.Meta.fields
+
+
 class ProductShortSerializer(serializers.ModelSerializer):
     sub_products = SubProductShortSerializer(many=True, read_only=True)
     brand = BrandSerializer(read_only=True)
@@ -79,7 +98,7 @@ class ProductShortSerializer(serializers.ModelSerializer):
         )
 
 
-class ProductSerializer(ProductShortSerializer):
+class ProductListSerializer(ProductShortSerializer):
     """Сериализатор для товаров с категорией и иерархией от главной категории до текущей."""
 
     category = ParentCategorySerializer(many=True, read_only=True)

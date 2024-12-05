@@ -35,6 +35,14 @@ class ProductRepository:
             raise NotFoundError
         return product
 
+    def update_product(self, slug: str, **kwargs):
+        category = kwargs.pop("category")
+        product = Product.objects.get(slug=slug)
+        if category:
+            product.category.set(category)
+        product.save(**kwargs)
+        return product
+
 
 class CategoryRepository:
     """Репозиторий для работы с данными пользователей."""
@@ -61,3 +69,6 @@ class CategoryRepository:
 
     def get_featured(self) -> QuerySet[Category]:
         return Category.objects.filter(is_featured=True).prefetch_related("children")
+
+    def get_all(self) -> QuerySet[Category]:
+        return Category.objects.all()
