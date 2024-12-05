@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from rest_framework import mixins, viewsets
 
-from abc_back.api.views import MultiSerializerViewSetMixin
 from abc_back.api.pagination import DefaultPageNumberPagination
-
+from abc_back.api.views import MultiSerializerViewSetMixin
 from abc_back.blogs.models import Category, Post
 
 from .serializers import CategoryShortSerializer, PostDetailSerializer, PostSerializer

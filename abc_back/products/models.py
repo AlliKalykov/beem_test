@@ -101,7 +101,10 @@ class Product(TimestampedModelMixin, PublishedModelMixin):
         Category, verbose_name="Категория",
         related_name="products", related_query_name="product",
     )
-    brand = models.ForeignKey(Brand, verbose_name="Бренд", on_delete=models.CASCADE)
+    brand = models.ForeignKey(
+        Brand, verbose_name="Бренд", on_delete=models.CASCADE,
+        related_name="products", related_query_name="product",
+    )
 
     is_novelty = models.BooleanField("Новинка", default=False, help_text="Товар является новинкой")
     is_bestseller = models.BooleanField("Бестселлер", default=False, help_text="Товар является бестселлером")

@@ -1,6 +1,6 @@
 from abc_back.api.openapi import extend_schema
 
-from .serializers import CategoryTreeSerializer, ProductShortSerializer, ParentCategorySerializer, ProductListSerializer
+from .serializers import CategoryTreeSerializer, ParentCategorySerializer, ProductListSerializer, ProductShortSerializer
 
 
 list_products = extend_schema(

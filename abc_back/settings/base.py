@@ -56,6 +56,7 @@ class Base(Configuration):
         "abc_back.products.apps.ProductsConfig",
         "abc_back.pages.apps.PagesConfig",
         "abc_back.blogs.apps.BlogsConfig",
+        "abc_back.reviews.apps.ReviewsConfig",
     ]
 
     MIDDLEWARE = [

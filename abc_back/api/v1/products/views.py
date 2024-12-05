@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dependency_injector.wiring import Provide, inject
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny
@@ -9,14 +9,14 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from abc_back.api.permissions import IsSuperUser
-from abc_back.api.views import MultiSerializerViewSetMixin, MultiPermissionViewSetMixin
+from abc_back.api.views import MultiPermissionViewSetMixin, MultiSerializerViewSetMixin
 from abc_back.containers import Container
 from abc_back.products.models import Category, Product
 from abc_back.products.repositories import CategoryRepository, ProductRepository
 
 from . import openapi
 from .serializers import (
-    CategoryTreeSerializer, ProductSerializer, ProductShortSerializer, CategoryShortSerializer, ProductListSerializer,
+    CategoryShortSerializer, CategoryTreeSerializer, ProductListSerializer, ProductSerializer, ProductShortSerializer,
     ProductUpdateSerializer,
 )
 
@@ -123,7 +123,8 @@ class ProductViewSet(
     def partial_update(
         self, request, *args,
         product_repository: ProductRepository = Provide[Container.product_package.product_repository],
-        **kwargs):
+        **kwargs,
+    ):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         print(serializer.validated_data)
@@ -136,7 +137,6 @@ class ProductViewSet(
     def destroy(self, request, *args, **kwargs):
         return super(ProductViewSet, self).destroy(request, *args, **kwargs)
 
-
     @openapi.list_products
     def list(self, request, *args, **kwargs):
         return super(ProductViewSet, self).list(request, *args, **kwargs)
@@ -146,5 +146,3 @@ class ProductViewSet(
         product = self.get_object(**kwargs)
         serializer = self.get_serializer(product)
         return Response(serializer.data)
-
-
