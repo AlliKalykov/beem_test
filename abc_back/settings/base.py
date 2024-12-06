@@ -319,8 +319,6 @@ class Base(Configuration):
         CORS_ALLOW_CREDENTIALS = True
     else:
         CORS_ALLOW_HEADERS = env("CORS_ALLOW_HEADERS", default="*")
-    CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default="*").split(",")
-    CORS_ORIGIN_WHITELIST = env("CORS_ORIGIN_WHITELIST", default="*").split(",")
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
