@@ -35,8 +35,12 @@ class UserRepository:
             raise NotFoundError
         return user
 
-    def create_user(self, email: str, password: str) -> User | None:
+    def create_user(
+        self, email: str, password: str, middle_name: str | None, first_name: str = "", last_name: str = "",
+    ) -> User | None:
         """Создание пользователя."""
         if User.objects.filter(email=email).exists():
             return
-        return User.objects.create_user(email=email, password=password)
+        return User.objects.create_user(
+            email=email, password=password, first_name=first_name, last_name=last_name, middle_name=middle_name
+        )

@@ -51,15 +51,11 @@ class LoginSerializer(serializers.Serializer):
 class RegisterSerializer(serializers.Serializer):
     """Сериалайзер для регистрации или входа пользователя."""
 
+    first_name = serializers.CharField(label="Имя", required=True)
+    last_name = serializers.CharField(label="Фамилия", required=True)
+    middle_name = serializers.CharField(label="Отчество", required=False)
     email = serializers.EmailField(label="Почта", required=True)
     password = serializers.CharField(label="Пароль", required=True)
-    password_confirm = serializers.CharField(label="Подтверждение пароля", required=True)
-
-    def validate(self, attrs):
-        """Проверка паролей на совпадение."""
-        if attrs["password"] != attrs["password_confirm"]:
-            raise serializers.ValidationError("Пароли не совпадают")
-        return attrs
 
 
 class LoginResponseSerializer(serializers.Serializer):

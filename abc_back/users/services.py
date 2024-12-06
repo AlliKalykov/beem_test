@@ -145,6 +145,6 @@ class UserService:
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
 
-    def create_user(self, email: str, password: str) -> UserModel:
+    def create_user(self, email: str, password: str, **kwargs) -> UserModel:
         """Создание пользователя."""
-        return self._user_repository.create_user(email=email, password=password)
+        return self._user_repository.create_user(email=email, password=password, **kwargs)
