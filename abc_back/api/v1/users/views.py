@@ -219,7 +219,8 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
         refresh = RefreshToken.for_user(user)
         return Response(
             data={
-                "access": str(refresh.access_token),
+                "refresh_token": str(refresh),
+                "access_token": str(refresh.access_token),
             },
             status=status.HTTP_201_CREATED,
         )
