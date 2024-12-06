@@ -18,6 +18,9 @@ class AboutUs(models.Model):
     work_title = models.TextField("Заголовок работы")
     work_text = models.TextField("Текст работы")
     work_poster = models.FileField("Постер работы", upload_to=file_upload_to, blank=True, null=True)
+    is_featured = models.BooleanField("Основное", default=False)
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "О нас"
@@ -25,6 +28,11 @@ class AboutUs(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if self.is_featured:
+            AboutUs.objects.exclude(pk=self.pk).update(is_featured=False)
+        super().save(*args, **kwargs)
 
 
 class Delivery(models.Model):
@@ -35,6 +43,9 @@ class Delivery(models.Model):
     phone = models.CharField("Номер телефона", max_length=20)
     whatsapp = models.CharField("WhatsApp номер", max_length=255)
     telegram = models.CharField("Telegram номер", max_length=255)
+    is_featured = models.BooleanField("Основное", default=False)
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Доставка"
@@ -42,6 +53,11 @@ class Delivery(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if self.is_featured:
+            Delivery.objects.exclude(pk=self.pk).update(is_featured=False)
+        super().save(*args, **kwargs)
 
 
 class GiftCertificate(models.Model):
@@ -52,6 +68,9 @@ class GiftCertificate(models.Model):
     phone = models.CharField("Номер телефона", max_length=20)
     whatsapp = models.CharField("WhatsApp номер", max_length=255)
     telegram = models.CharField("Telegram номер", max_length=255)
+    is_featured = models.BooleanField("Основное", default=False)
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Подарочный сертификат"
@@ -59,3 +78,8 @@ class GiftCertificate(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if self.is_featured:
+            GiftCertificate.objects.exclude(pk=self.pk).update(is_featured=False)
+        super().save(*args, **kwargs)

@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, status, viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from abc_back.api.pagination import DefaultPageNumberPagination
 from abc_back.api.views import MultiSerializerViewSetMixin
-
 from abc_back.favorites.models import FavoriteProduct
 
-from .serializers import FavoriteProductShortSerializer, FavoriteProductSerializer
+from .serializers import FavoriteProductSerializer, FavoriteProductShortSerializer
 
 
 class FavoriteProductViewSet(

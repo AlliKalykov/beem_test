@@ -12,6 +12,6 @@ class PagesConfig(AppConfig):
         container.wire(
             modules=[
                 ".admin",
-                # "abc_back.api.v1.users.views",
+                "abc_back.api.v1.pages.views",
             ],
         )

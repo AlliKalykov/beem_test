@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from rest_framework import serializers
 
 from abc_back.api.v1.products.serializers import ProductShortSerializer
