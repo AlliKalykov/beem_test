@@ -209,7 +209,7 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
         password = serializer.validated_data["password"]
         first_name = serializer.validated_data["first_name"]
         last_name = serializer.validated_data["last_name"]
-        middle_name = serializer.validated_data["middle_name"]
+        middle_name = serializer.validated_data.get("middle_name")
         # email_otp_service.create_token(serializer.data)
         user = user_service.create_user(
             email=email, password=password, first_name=first_name, last_name=last_name, middle_name=middle_name,
