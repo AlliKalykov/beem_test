@@ -1,16 +1,41 @@
-from django.db.models import QuerySet
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
+from django.db.models import BooleanField, Case, Prefetch, QuerySet, Value, When
 
 from abc_back.exceptions import NotFoundError
-from abc_back.products.models import Category, Product
 from abc_back.types import Id
+
+from .models import Category, Product
+from abc_back.favorites.models import FavoriteProduct
+
+
+if TYPE_CHECKING:
+    from abc_back.users.models import User
 
 
 class ProductRepository:
     """Репозиторий для работы с данными пользователей."""
 
-    def get_active(self) -> QuerySet[Product]:
-        """Получение активных пользователей."""
-        return Product.objects.filter(is_active=True)
+    def get_active(self, user: Optional[User] = None) -> QuerySet[Product]:
+        """Получение активных товаров с лайками, избранными и их количествами."""
+        is_user_authenticated = user and user.is_authenticated
+        favorite_qs = (
+            FavoriteProduct.objects.filter(user=user) if is_user_authenticated else FavoriteProduct.objects.none()
+        )
+        products = (
+            Product.objects.filter(is_active=True)
+            .annotate(
+                is_favorite=Case(
+                    When(favorite__in=favorite_qs, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField(),
+                )
+            )
+            .prefetch_related(Prefetch("favorites", queryset=favorite_qs))
+        )
+        return products
 
     def get_by_pk(self, product_pk: Id, /, *, active: bool = False) -> Product:
         """Получение пользователя по ID."""

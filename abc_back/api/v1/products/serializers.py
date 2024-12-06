@@ -90,11 +90,12 @@ class ProductUpdateSerializer(ProductSerializer):
 class ProductShortSerializer(serializers.ModelSerializer):
     sub_products = SubProductShortSerializer(many=True, read_only=True)
     brand = BrandSerializer(read_only=True)
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Product
         fields = (
-            "id", "name", "slug", "poster", "brand", "sub_products",
+            "id", "name", "slug", "poster", "brand", "sub_products", "is_favorite",
         )
 
 

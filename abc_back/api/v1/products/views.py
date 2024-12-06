@@ -101,7 +101,7 @@ class ProductViewSet(
     def get_queryset(
         self, *, product_repository: ProductRepository = Provide[Container.product_package.product_repository],
     ):
-        return product_repository.get_active()
+        return product_repository.get_active(user=self.request.user)
 
     @inject
     def get_object(
