@@ -3,6 +3,16 @@ from rest_framework import serializers
 from abc_back.users.models import User
 
 
+class ProfileShortSerializer(serializers.ModelSerializer):
+    """Сериаллайзер для получения данных профиля пользователя."""
+
+    class Meta:
+        model = User
+        fields = [
+            "first_name", "last_name", "profile_image",
+        ]
+
+
 class ProfileInfoSerializer(serializers.ModelSerializer):
     """Сериаллайзер для получения данных профиля пользователя."""
 

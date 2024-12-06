@@ -10,4 +10,5 @@ urlpatterns = [
     path("product/", include("abc_back.api.v1.products.urls")),
     path("pages/", include("abc_back.api.v1.pages.urls")),
     path("blogs/", include("abc_back.api.v1.blogs.urls")),
+    path("favorites/", include("abc_back.api.v1.favorites.urls")),
 ]

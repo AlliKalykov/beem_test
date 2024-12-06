@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rest_framework import serializers
 
 from abc_back.pages.models import AboutUs, Delivery, GiftCertificate

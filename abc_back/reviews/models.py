@@ -1,5 +1,5 @@
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 
 from abc_back.mixins import PublishedModelMixin, TimestampedModelMixin
 from abc_back.products.models import Product
@@ -53,7 +53,7 @@ class Review(TimestampedModelMixin, PublishedModelMixin):
         return f"{self.product} - {self.user}"
 
     def clean(self):
-        if 0<=self.rate<=5:
+        if 0 <= self.rate <= 5:
             super().clean()
         else:
             raise ValidationError("Рейтинг должен быть от 0 до 5")
