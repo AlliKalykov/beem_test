@@ -16,7 +16,7 @@ from .serializers import AboutUsSerializer, DeliverySerializer, GiftCertificateS
 
 class AboutUsViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet):
     queryset = AboutUs.objects.filter(is_featured=True)
-    permission_classes = []
+    authentication_classes = []
 
     serializer_classes = {
         "featured": AboutUsSerializer,
@@ -34,7 +34,7 @@ class AboutUsViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet):
 
 class DeliveryViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet):
     queryset = Delivery.objects.filter(is_featured=True)
-    permission_classes = []
+    authentication_classes = []
 
     serializer_classes = {
         "featured": DeliverySerializer,
@@ -52,7 +52,7 @@ class DeliveryViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet):
 
 class GiftCertificateViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet):
     queryset = GiftCertificate.objects.filter(is_featured=True)
-    permission_classes = []
+    authentication_classes = []
 
     serializer_classes = {
         "featured": GiftCertificateSerializer,

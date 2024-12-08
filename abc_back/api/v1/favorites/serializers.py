@@ -8,13 +8,11 @@ from abc_back.favorites.models import FavoriteProduct
 
 
 class FavoriteProductShortSerializer(serializers.ModelSerializer):
-    user = ProfileShortSerializer(read_only=True)
 
     class Meta:
         model = FavoriteProduct
-        fields = [
-            "id", "user", "product",
-        ]
+        fields = ("id", "user", "product")
+        read_only_fields = ("id", "user", "product")
 
     def validate(self, attrs):
         if FavoriteProduct.objects.filter(user=self.context["request"].user, product=attrs["product"]).exists():
@@ -24,6 +22,7 @@ class FavoriteProductShortSerializer(serializers.ModelSerializer):
 
 class FavoriteProductSerializer(FavoriteProductShortSerializer):
     product = ProductShortSerializer(read_only=True)
+    user = ProfileShortSerializer(read_only=True)
 
     class Meta(FavoriteProductShortSerializer.Meta):
         fields = FavoriteProductShortSerializer.Meta.fields

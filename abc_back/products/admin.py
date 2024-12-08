@@ -24,7 +24,7 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "is_featured")
+    list_display = ("name", "slug", "is_published", "is_featured")
     list_display_links = ("name", "slug")
     search_fields = ("name",)
     prepopulated_fields = {"slug": ("name",)}
@@ -45,8 +45,8 @@ class SizeAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "get_categories", "brand")
-    list_display_links = ("name", "slug")
+    list_display = ("id", "name", "slug", "get_categories", "brand")
+    list_display_links = ("id", "name", "slug")
     search_fields = ("name",)
     prepopulated_fields = {"slug": ("name",)}
 

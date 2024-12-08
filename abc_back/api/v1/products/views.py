@@ -4,11 +4,12 @@ from dependency_injector.wiring import Provide, inject
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, MultiPartParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from abc_back.api.permissions import IsSuperUser
+from abc_back.api.v1.favorites.serializers import FavoriteProductShortSerializer
 from abc_back.api.views import MultiPermissionViewSetMixin, MultiSerializerViewSetMixin
 from abc_back.containers import Container
 from abc_back.products.models import Category, Product
@@ -85,6 +86,7 @@ class ProductViewSet(
         "retrieve": ProductListSerializer,
         "update": ProductUpdateSerializer,
         "partial_update": ProductUpdateSerializer,
+        "favorite": FavoriteProductShortSerializer,
     }
     permission_action_map = {
         "create": [IsSuperUser],
@@ -92,9 +94,11 @@ class ProductViewSet(
         "retrieve": [AllowAny],
         "partial_update": [IsSuperUser],
         "destroy": [IsSuperUser],
+        "favorite": [IsAuthenticated],
+        "unfavorite": [IsAuthenticated],
     }
     parser_classes = [JSONParser, MultiPartParser]
-    http_method_names = ["get", "post", "patch", "delete"]
+    # http_method_names = ["get", "post", "patch", "delete"]
     lookup_field = "slug"
 
     @inject
@@ -135,7 +139,9 @@ class ProductViewSet(
 
     @openapi.delete_product
     def destroy(self, request, *args, **kwargs):
-        return super(ProductViewSet, self).destroy(request, *args, **kwargs)
+        product = self.get_object(**kwargs)
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @openapi.list_products
     def list(self, request, *args, **kwargs):
@@ -146,3 +152,24 @@ class ProductViewSet(
         product = self.get_object(**kwargs)
         serializer = self.get_serializer(product)
         return Response(serializer.data)
+
+    @action(detail=True, methods=["POST"], url_path="favorite")
+    def favorite(
+        self, request: Request,
+        product_repository: ProductRepository = Provide[Container.product_package.product_repository],
+        **kwargs,
+    ):
+        product = self.get_object(**kwargs)
+        favorite = product_repository.add_to_favorites(user=request.user, product=product)
+
+        return Response(self.get_serializer(favorite).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["DELETE"], url_path="unfavorite")
+    def unfavorite(
+        self, request: Request,
+        product_repository: ProductRepository = Provide[Container.product_package.product_repository],
+        **kwargs,
+    ):
+        product = self.get_object(**kwargs)
+        product_repository.remove_from_favorites(user=request.user, product=product)
+        return Response(status=status.HTTP_204_NO_CONTENT)

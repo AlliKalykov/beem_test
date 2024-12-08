@@ -4,11 +4,11 @@ from typing import TYPE_CHECKING, Optional
 
 from django.db.models import BooleanField, Case, Prefetch, QuerySet, Value, When
 
-from abc_back.exceptions import NotFoundError
+from abc_back.exceptions import BadRequestError, NotFoundError
+from abc_back.favorites.models import FavoriteProduct
 from abc_back.types import Id
 
 from .models import Category, Product
-from abc_back.favorites.models import FavoriteProduct
 
 
 if TYPE_CHECKING:
@@ -31,9 +31,10 @@ class ProductRepository:
                     When(favorite__in=favorite_qs, then=Value(True)),
                     default=Value(False),
                     output_field=BooleanField(),
-                )
+                ),
             )
             .prefetch_related(Prefetch("favorites", queryset=favorite_qs))
+            .distinct()
         )
         return products
 
@@ -67,6 +68,14 @@ class ProductRepository:
             product.category.set(category)
         product.save(**kwargs)
         return product
+
+    def add_to_favorites(self, user: User, product: Product):
+        if FavoriteProduct.objects.filter(user=user, product=product).exists():
+            raise BadRequestError("Товар уже добавлен в избранное")
+        return FavoriteProduct.objects.create(user=user, product=product)
+
+    def remove_from_favorites(self, user: User, product: Product):
+        return FavoriteProduct.objects.filter(user=user, product=product).delete()
 
 
 class CategoryRepository:
