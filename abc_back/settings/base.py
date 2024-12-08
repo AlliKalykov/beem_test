@@ -58,6 +58,7 @@ class Base(Configuration):
         "abc_back.blogs.apps.BlogsConfig",
         "abc_back.reviews.apps.ReviewsConfig",
         "abc_back.favorites.apps.FavoritesConfig",
+        "abc_back.questionary.apps.QuestionaryConfig",
     ]
 
     MIDDLEWARE = [
