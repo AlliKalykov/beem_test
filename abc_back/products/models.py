@@ -232,4 +232,6 @@ class SubProduct(TimestampedModelMixin, PublishedModelMixin):
     def save(self, *args, **kwargs):
         if self.sale_percent and self.sell_price:
             self.final_price = self.sell_price - (self.sell_price * self.sale_percent / 100)
+        else:
+            self.final_price = self.sell_price
         super().save(*args, **kwargs)

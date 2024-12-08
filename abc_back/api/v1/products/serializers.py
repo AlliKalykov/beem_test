@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from drf_spectacular.utils import extend_schema_field
+
 from rest_framework import serializers
 
 from abc_back.products.models import Brand, Category, Color, Product, Size, SubProduct
@@ -88,7 +92,7 @@ class ProductUpdateSerializer(ProductSerializer):
 
 
 class ProductShortSerializer(serializers.ModelSerializer):
-    sub_products = SubProductShortSerializer(many=True, read_only=True)
+    sub_products = serializers.SerializerMethodField()
     brand = BrandSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
 
@@ -97,6 +101,21 @@ class ProductShortSerializer(serializers.ModelSerializer):
         fields = (
             "id", "name", "slug", "poster", "brand", "sub_products", "is_favorite",
         )
+
+    @extend_schema_field(SubProductShortSerializer(many=True))
+    def get_sub_products(self, obj):
+        # Получение фильтров из запроса
+        request = self.context.get('request')
+        price_min = request.query_params.get('price_min')
+        price_max = request.query_params.get('price_max')
+
+        sub_products = obj.sub_products.filter(is_available=True)
+        if price_min:
+            sub_products = sub_products.filter(final_price__gte=price_min)
+        if price_max:
+            sub_products = sub_products.filter(final_price__lte=price_max)
+
+        return SubProductShortSerializer(sub_products, many=True).data
 
 
 class ProductListSerializer(ProductShortSerializer):

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from dependency_injector.wiring import Provide, inject
+
+from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, MultiPartParser
@@ -8,6 +11,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from abc_back.api.filters import SearchFilter
 from abc_back.api.permissions import IsSuperUser
 from abc_back.api.v1.favorites.serializers import FavoriteProductShortSerializer
 from abc_back.api.views import MultiPermissionViewSetMixin, MultiSerializerViewSetMixin
@@ -20,6 +24,8 @@ from .serializers import (
     CategoryShortSerializer, CategoryTreeSerializer, ProductListSerializer, ProductSerializer, ProductShortSerializer,
     ProductUpdateSerializer,
 )
+from .filters import ProductFilterSet
+from ...pagination import DefaultPageNumberPagination
 
 
 class CategoryViewSet(
@@ -49,6 +55,7 @@ class CategoryViewSet(
     }
     parser_classes = [JSONParser, MultiPartParser]
     http_method_names = ["get", "post", "patch", "delete"]
+    search_fields = ["name"]
     lookup_field = "slug"
 
     @inject
@@ -97,8 +104,11 @@ class ProductViewSet(
         "favorite": [IsAuthenticated],
         "unfavorite": [IsAuthenticated],
     }
+    pagination_class = DefaultPageNumberPagination
     parser_classes = [JSONParser, MultiPartParser]
-    # http_method_names = ["get", "post", "patch", "delete"]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = ProductFilterSet
+    search_fields = ["name", "category__name", "brand__name", "description"]
     lookup_field = "slug"
 
     @inject
