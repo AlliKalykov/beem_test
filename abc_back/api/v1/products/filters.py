@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from django.db.models import Exists, OuterRef
-
 from django_filters import rest_framework as drf_filters
 
 from abc_back.products.models import Product, SubProduct
@@ -34,8 +33,8 @@ class ProductFilterSet(drf_filters.FilterSet):
                         product_id=OuterRef("id"),
                         final_price__gte=value,
                         is_available=True,
-                    )
-                )
+                    ),
+                ),
             )
         return queryset
 
@@ -47,7 +46,7 @@ class ProductFilterSet(drf_filters.FilterSet):
                         product_id=OuterRef("id"),
                         final_price__lte=value,
                         is_available=True,
-                    )
-                )
+                    ),
+                ),
             )
         return queryset

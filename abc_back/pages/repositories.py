@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc_back.exceptions import NotFoundError
 
-from .models import AboutUs, Delivery, GiftCertificate
+from .models import AboutUs, Contact, Delivery, GiftCertificate
 
 
 class PageRepository:
@@ -24,4 +24,10 @@ class PageRepository:
         try:
             return GiftCertificate.objects.get(is_featured=True)
         except GiftCertificate.DoesNotExist:
+            raise NotFoundError("Страница не найдена")
+
+    def get_featured_contact(self) -> Contact:
+        try:
+            return Contact.objects.get(is_featured=True)
+        except Contact.DoesNotExist:
             raise NotFoundError("Страница не найдена")

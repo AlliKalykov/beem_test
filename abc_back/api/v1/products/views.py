@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from dependency_injector.wiring import Provide, inject
-
 from django_filters.rest_framework import DjangoFilterBackend
-
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, MultiPartParser
@@ -19,13 +17,13 @@ from abc_back.containers import Container
 from abc_back.products.models import Category, Product
 from abc_back.products.repositories import CategoryRepository, ProductRepository
 
+from ...pagination import DefaultPageNumberPagination
 from . import openapi
+from .filters import ProductFilterSet
 from .serializers import (
     CategoryShortSerializer, CategoryTreeSerializer, ProductListSerializer, ProductSerializer, ProductShortSerializer,
     ProductUpdateSerializer,
 )
-from .filters import ProductFilterSet
-from ...pagination import DefaultPageNumberPagination
 
 
 class CategoryViewSet(

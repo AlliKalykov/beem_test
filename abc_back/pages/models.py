@@ -83,3 +83,35 @@ class GiftCertificate(models.Model):
         if self.is_featured:
             GiftCertificate.objects.exclude(pk=self.pk).update(is_featured=False)
         super().save(*args, **kwargs)
+
+
+class Contact(models.Model):
+    email = models.EmailField("Электронная почта", max_length=255, blank=True, null=True)
+    phone = models.CharField("Номер телефона", max_length=20, blank=True, null=True)
+    city = models.CharField("Город", max_length=255, blank=True, null=True)
+    street = models.CharField("Улица", max_length=255, blank=True, null=True)
+    house = models.CharField("Дом", max_length=255, blank=True, null=True)
+    schedule = models.TextField("График работы", blank=True, null=True)
+    instagram = models.URLField("Instagram", max_length=48, blank=True, null=True)
+    whatsapp = models.URLField("WhatsApp номер", max_length=48, blank=True, null=True)
+    telegram = models.URLField("Telegram ", max_length=48, blank=True, null=True)
+    facebook = models.URLField("Facebook", max_length=48, blank=True, null=True)
+    xcom = models.URLField("Твиттер", max_length=48, blank=True, null=True)
+    vk = models.URLField("Вконтакте", max_length=48, blank=True, null=True)
+    tiktok = models.URLField("Тикток", max_length=48, blank=True, null=True)
+    youtube = models.URLField("Ютуб", max_length=48, blank=True, null=True)
+    is_featured = models.BooleanField("Основное", default=False)
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Контакты"
+        verbose_name_plural = "Контакты"
+
+    def __str__(self):
+        return f"[{self.id}]: {self.email}"
+
+    def save(self, *args, **kwargs):
+        if self.is_featured:
+            Contact.objects.exclude(pk=self.pk).update(is_featured=False)
+        super().save(*args, **kwargs)

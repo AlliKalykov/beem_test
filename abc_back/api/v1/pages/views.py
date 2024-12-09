@@ -8,10 +8,10 @@ from rest_framework.response import Response
 
 from abc_back.api.views import MultiSerializerViewSetMixin
 from abc_back.containers import Container
-from abc_back.pages.models import AboutUs, Delivery, GiftCertificate
+from abc_back.pages.models import AboutUs, Contact, Delivery, GiftCertificate
 from abc_back.pages.repositories import PageRepository
 
-from .serializers import AboutUsSerializer, DeliverySerializer, GiftCertificateSerializer
+from .serializers import AboutUsSerializer, ContactSerializer, DeliverySerializer, GiftCertificateSerializer
 
 
 class AboutUsViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet):
@@ -65,4 +65,22 @@ class GiftCertificateViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSe
     ):
         gift_certificate = page_repository.get_featured_gift_certificate()
         serializer = self.get_serializer(gift_certificate)
+        return Response(serializer.data)
+
+
+class ContactViewSet(MultiSerializerViewSetMixin, viewsets.GenericViewSet):
+    queryset = Contact.objects.filter(is_featured=True)
+    authentication_classes = []
+
+    serializer_classes = {
+        "featured": ContactSerializer,
+    }
+
+    @action(detail=False, methods=["GET"], url_path="featured")
+    def featured(
+        self, request: Request,
+        page_repository: PageRepository = Provide[Container.page_package.page_repository],
+    ):
+        contact = page_repository.get_featured_contact()
+        serializer = self.get_serializer(contact)
         return Response(serializer.data)

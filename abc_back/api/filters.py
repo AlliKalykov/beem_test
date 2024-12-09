@@ -1,6 +1,5 @@
-from rest_framework.filters import SearchFilter as _SearchFilter
-
 from django.db.models import Q
+from rest_framework.filters import SearchFilter as _SearchFilter
 
 
 class SearchFilter(_SearchFilter):
