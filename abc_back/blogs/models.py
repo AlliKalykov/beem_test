@@ -37,9 +37,9 @@ class Post(models.Model):
     )
     authors = models.ManyToManyField(User, verbose_name="Автор")
     is_active = models.BooleanField("Активность")
-    related_post = models.ManyToManyField("self", verbose_name="Родитель", null=True, blank=True)
+    related_post = models.ManyToManyField("self", verbose_name="Родитель", blank=True)
     related_product = models.ManyToManyField(
-        Product, verbose_name="Связанный продукт", null=True, blank=True,
+        Product, verbose_name="Связанный продукт", blank=True,
         related_name="posts", related_query_name="post",
     )
 

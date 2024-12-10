@@ -216,7 +216,7 @@ class SubProduct(TimestampedModelMixin, PublishedModelMixin):
     sell_price = models.FloatField("Цена продажи", default=0)
     purchase_price = models.FloatField("Цена закупки", default=0)
     sale_percent = models.PositiveIntegerField("Процент скидки", default=0)
-    final_price = models.FloatField("Цена продажи", default=0)
+    final_price = models.FloatField("Конечная цена", default=0)
 
     production_date = models.DateField("Дата производства", null=True, blank=True)
     expiration_date = models.DateField("Срок годности", null=True, blank=True)

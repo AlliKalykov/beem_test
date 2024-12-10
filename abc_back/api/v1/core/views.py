@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, mixins, filters
+from rest_framework import filters, mixins, viewsets
 
-from abc_back.api.views import MultiSerializerViewSetMixin
 from abc_back.api.pagination import DefaultPageNumberPagination
-
+from abc_back.api.views import MultiSerializerViewSetMixin
 from abc_back.core.models import City, Country
 
-from .serializers import CountrySerializer, CitySerializer
+from .serializers import CitySerializer, CountrySerializer
 
 
 class CountryViewSet(
