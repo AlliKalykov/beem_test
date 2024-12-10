@@ -46,11 +46,14 @@ class Base(Configuration):
 
         "rest_framework",
         "drf_spectacular",
+
         "phonenumber_field",
 
         "corsheaders",
 
         "django_celery_beat",
+
+        "adminsortable2",
 
         "abc_back.users.apps.UsersConfig",
         "abc_back.products.apps.ProductsConfig",
@@ -59,6 +62,7 @@ class Base(Configuration):
         "abc_back.reviews.apps.ReviewsConfig",
         "abc_back.favorites.apps.FavoritesConfig",
         "abc_back.questionary.apps.QuestionaryConfig",
+        "abc_back.core.apps.CoreConfig",
     ]
 
     MIDDLEWARE = [

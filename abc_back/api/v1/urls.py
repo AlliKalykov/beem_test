@@ -12,4 +12,5 @@ urlpatterns = [
     path("blogs/", include("abc_back.api.v1.blogs.urls")),
     path("favorites/", include("abc_back.api.v1.favorites.urls")),
     path("questionary/", include("abc_back.api.v1.questionary.urls")),
+    path("core/", include("abc_back.api.v1.core.urls")),
 ]

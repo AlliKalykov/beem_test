@@ -33,3 +33,22 @@ class PublishedModelMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class SortableModelMixin(models.Model):
+    position = models.PositiveSmallIntegerField("Позиция", default=0, blank=False, null=False)
+
+    class Meta:
+        abstract = True
+
+
+class ReadOnlyInlineMixin:
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
