@@ -2,14 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from django.db.models import BooleanField, Case, Prefetch, QuerySet, Value, When, OuterRef, Subquery
-from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import BooleanField, Case, Prefetch, QuerySet, Value, When
 
 from abc_back.exceptions import BadRequestError, NotFoundError
 from abc_back.favorites.models import FavoriteProduct
 from abc_back.types import Id
 
-from .models import Category, Product, Color, Size
+from .models import Category, Color, Product, Size
 
 
 if TYPE_CHECKING:

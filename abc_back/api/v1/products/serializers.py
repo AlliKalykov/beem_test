@@ -100,11 +100,10 @@ class ProductShortSerializer(serializers.ModelSerializer):
     colors = ColorSerializer(many=True, read_only=True)
     sizes = SizeSerializer(many=True, read_only=True)
 
-
     class Meta:
         model = Product
         fields = (
-            "id", "name", "slug", "poster", "brand", "sub_products", "is_favorite", "colors", "sizes"
+            "id", "name", "slug", "poster", "brand", "sub_products", "is_favorite", "colors", "sizes",
         )
 
     @extend_schema_field(SubProductShortSerializer(many=True))
