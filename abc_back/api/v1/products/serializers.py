@@ -56,7 +56,7 @@ class ColorSerializer(serializers.ModelSerializer):
 class SizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Size
-        fields = ("id", "name", "kind", "value", "is_active")
+        fields = ("id", "kind", "value", "description")
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -66,6 +66,9 @@ class BrandSerializer(serializers.ModelSerializer):
 
 
 class SubProductShortSerializer(serializers.ModelSerializer):
+    size = SizeSerializer(read_only=True)
+    color = ColorSerializer(read_only=True)
+
     class Meta:
         model = SubProduct
         fields = ("id", "slug", "product", "size", "color", "stock", "is_available", "final_price")
@@ -94,11 +97,14 @@ class ProductShortSerializer(serializers.ModelSerializer):
     sub_products = serializers.SerializerMethodField()
     brand = BrandSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
+    colors = ColorSerializer(many=True, read_only=True)
+    sizes = SizeSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = Product
         fields = (
-            "id", "name", "slug", "poster", "brand", "sub_products", "is_favorite",
+            "id", "name", "slug", "poster", "brand", "sub_products", "is_favorite", "colors", "sizes"
         )
 
     @extend_schema_field(SubProductShortSerializer(many=True))

@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from django.db.models import BooleanField, Case, Prefetch, QuerySet, Value, When
+from django.db.models import BooleanField, Case, Prefetch, QuerySet, Value, When, OuterRef, Subquery
+from django.contrib.postgres.aggregates import ArrayAgg
 
 from abc_back.exceptions import BadRequestError, NotFoundError
 from abc_back.favorites.models import FavoriteProduct
 from abc_back.types import Id
 
-from .models import Category, Product
+from .models import Category, Product, Color, Size
 
 
 if TYPE_CHECKING:
@@ -33,7 +34,19 @@ class ProductRepository:
                     output_field=BooleanField(),
                 ),
             )
-            .prefetch_related(Prefetch("favorites", queryset=favorite_qs))
+            .prefetch_related(
+                Prefetch("favorites", queryset=favorite_qs),
+                Prefetch(
+                    "sub_products__color",
+                    queryset=Color.objects.all(),
+                    to_attr="colors",
+                ),
+                Prefetch(
+                    "sub_products__size",
+                    queryset=Size.objects.all(),
+                    to_attr="sizes",
+                ),
+            )
             .distinct()
         )
         return products
