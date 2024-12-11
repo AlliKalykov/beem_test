@@ -42,7 +42,7 @@ class SortableModelMixin(models.Model):
         abstract = True
 
 
-class ReadOnlyInlineMixin:
+class ReadOnlyAdminMixin:
 
     def has_add_permission(self, request, obj=None):
         return False

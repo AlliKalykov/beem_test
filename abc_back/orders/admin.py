@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from abc_back.mixins import ReadOnlyInlineMixin
+from abc_back.mixins import ReadOnlyAdminMixin
 from abc_back.utils import render_object_changelist_link
 
 from .models import Order, OrderItem
 
 
-# TODO: добавить перед PROD ReadOnlyInlineMixin,
+# TODO: добавить перед PROD ReadOnlyAdminMixin,
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
@@ -21,17 +21,18 @@ class OrderAdmin(admin.ModelAdmin):
 
     inlines = [OrderItemInline]
 
+    @admin.display(description="Детали заказа")
     def order_items_link(self, obj):
         """Добавляет ссылку на OrderItemAdmin с фильтром по текущему заказу."""
+        position_count = obj.order_items.count()
         return render_object_changelist_link(
-            obj.items.first(), content="Детали заказа", query=f"order__id__exact={obj.pk}", new_tab=True,
+            OrderItem.objects.first(), content=f"Детали заказа ({position_count})",
+            query=f"order__id__exact={obj.pk}", new_tab=True,
         )
-
-    order_items_link.short_description = "Детали заказа"
 
 
 @admin.register(OrderItem)
-class OrderItemAdmin(ReadOnlyInlineMixin, admin.ModelAdmin):
+class OrderItemAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = ("id", "order", "sub_product", "quantity", "final_price", "total_sum")
     list_display_links = ("id", "order", "sub_product")
     search_fields = ("order",)

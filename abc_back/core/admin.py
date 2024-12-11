@@ -1,12 +1,12 @@
 from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 
-from abc_back.mixins import ReadOnlyInlineMixin
+from abc_back.mixins import ReadOnlyAdminMixin
 
 from .models import City, Country
 
 
-class CityInline(ReadOnlyInlineMixin, admin.TabularInline):
+class CityInline(ReadOnlyAdminMixin, admin.TabularInline):
     model = City
     extra = 0
 
