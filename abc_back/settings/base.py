@@ -64,6 +64,7 @@ class Base(Configuration):
         "abc_back.questionary.apps.QuestionaryConfig",
         "abc_back.core.apps.CoreConfig",
         "abc_back.orders.apps.OrdersConfig",
+        "abc_back.cart.apps.CartConfig",
     ]
 
     MIDDLEWARE = [

@@ -4,7 +4,7 @@ from abc_back.mixins import PublishedModelMixin, TimestampedModelMixin
 from abc_back.utils import generate_filename
 
 from .constants import SizeType
-from .managers import ActiveProductManager
+from .managers import ActiveProductManager, ActiveSubProductManager
 
 
 BASE_PRODUCTS_MEDIA_FOLDER = "products"
@@ -221,6 +221,9 @@ class SubProduct(TimestampedModelMixin, PublishedModelMixin):
     production_date = models.DateField("Дата производства", null=True, blank=True)
     expiration_date = models.DateField("Срок годности", null=True, blank=True)
     shelf_life = models.PositiveIntegerField("Срок хранения", null=True, blank=True)
+
+    objects = models.Manager()
+    active = ActiveSubProductManager()
 
     class Meta:
         verbose_name = "Подтовар"

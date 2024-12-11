@@ -8,7 +8,7 @@ from abc_back.exceptions import BadRequestError, NotFoundError
 from abc_back.favorites.models import FavoriteProduct
 from abc_back.types import Id
 
-from .models import Category, Color, Product, Size
+from .models import Category, Color, Product, Size, SubProduct
 
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 class ProductRepository:
-    """Репозиторий для работы с данными пользователей."""
+    """Репозиторий для работы с данными товаров."""
 
     def get_active(self, user: Optional[User] = None) -> QuerySet[Product]:
         """Получение активных товаров с лайками, избранными и их количествами."""
@@ -90,8 +90,23 @@ class ProductRepository:
         return FavoriteProduct.objects.filter(user=user, product=product).delete()
 
 
+class SubProductRepository:
+    """Репозиторий для работы с данными подтоваров."""
+
+    def get_active(self) -> QuerySet[SubProduct]:
+        return SubProduct.objects.filter(stock__gt=0, is_available=True)
+
+    def get_by_pk(self, sub_product_pk: Id, /, *, active: bool = False) -> SubProduct:
+        base_manager = SubProduct.active if active else SubProduct.objects
+        try:
+            sub_product = base_manager.get(pk=sub_product_pk)
+        except SubProduct.DoesNotExist:
+            raise NotFoundError
+        return sub_product
+
+
 class CategoryRepository:
-    """Репозиторий для работы с данными пользователей."""
+    """Репозиторий для работы с данными категорий товаров."""
 
     def get_by_pk(self, category_pk: Id) -> Category:
         """Получение пользователя по ID."""
