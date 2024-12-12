@@ -22,6 +22,30 @@ class Cart(TimestampedModelMixin):
             return f"[{self.id}] {self.user}"
         return f"[{self.id}] {self.session_key}"
 
+    @property
+    def total_amount(self):
+        return getattr(self, "_total_amount", 0)
+
+    @total_amount.setter
+    def total_amount(self, value):
+        self._total_amount = value
+
+    @property
+    def total_amount_without_sale(self):
+        return getattr(self, "_total_amount_without_sale", 0)
+
+    @total_amount_without_sale.setter
+    def total_amount_without_sale(self, value):
+        self._total_amount_without_sale = value
+
+    @property
+    def total_sale_amount(self):
+        return getattr(self, "_total_sale_amount", 0)
+
+    @total_sale_amount.setter
+    def total_sale_amount(self, value):
+        self._total_sale_amount = value
+
 
 class CartItem(TimestampedModelMixin):
 

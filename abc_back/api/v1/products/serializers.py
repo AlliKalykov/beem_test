@@ -91,7 +91,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = (
-            "id", "name", "slug", "poster", "brand", "category", "is_novelty", "is_bestseller", "is_back_in_stock",
+            "id", "name", "slug", "brand", "category", "is_novelty", "is_bestseller", "is_back_in_stock",
             "is_recommendation", "description", "use", "ingredient", "additional", "is_active",
         )
 
@@ -126,7 +126,7 @@ class ProductShortSerializer(serializers.ModelSerializer):
             "id", "name", "slug", "brand", "sub_products", "is_favorite", "colors", "sizes", "posters",
         )
 
-    @extend_schema_field(SubProductShortSerializer(many=True))
+    @extend_schema_field(SubProductSerializer(many=True))
     def get_sub_products(self, obj):
         # Получение фильтров из запроса
         request = self.context.get("request")
@@ -139,7 +139,7 @@ class ProductShortSerializer(serializers.ModelSerializer):
         if price_max:
             sub_products = sub_products.filter(final_price__lte=price_max)
 
-        return SubProductShortSerializer(sub_products, many=True).data
+        return SubProductSerializer(sub_products, many=True).data
 
 
 class ProductListSerializer(ProductShortSerializer):
@@ -154,7 +154,7 @@ class ProductListSerializer(ProductShortSerializer):
         )
 
 class ProductDetailSerializer(ProductListSerializer):
-    sub_products = SubProductShortSerializer(many=True, read_only=True)
+    sub_products = SubProductSerializer(many=True, read_only=True)
 
     class Meta(ProductListSerializer.Meta):
         fields = ProductListSerializer.Meta.fields

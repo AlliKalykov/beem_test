@@ -24,29 +24,21 @@ class CartRepository:
         cart = self.get_cart(user_id, session_key)
         if cart:
             cart_items_with_cost_calculations = self.get_cart_items(cart.id)
-            cart_with_calculations = (
-                Cart.objects.filter(id=cart.id)
-                .prefetch_related(
-                    Prefetch(
-                        "items",
-                        queryset=cart_items_with_cost_calculations,
-                    ),
-                )
-                .annotate(
-                    total_amount=ExpressionWrapper(
-                        Sum("items__total_price"), output_field=DecimalField(decimal_places=2, max_digits=10)
-                    ),
-                    total_amount_without_sale=ExpressionWrapper(
-                        Sum("items__amount_without_sale"), output_field=DecimalField(decimal_places=2, max_digits=10)
-                    ),
-                    total_sale_amount=ExpressionWrapper(
-                        Sum("items__sale_amount"), output_field=DecimalField(decimal_places=2, max_digits=10)
-                    ),
-                ),
+
+            # Вычисление общих сумм
+            total_amount = cart_items_with_cost_calculations.aggregate(
+                total_amount=Sum("total_price"),
+                total_amount_without_sale=Sum("amount_without_sale"),
+                total_sale_amount=Sum("sale_amount"),
             )
+
+            cart.total_amount = total_amount["total_amount"] or 0
+            cart.total_amount_without_sale = total_amount["total_amount_without_sale"] or 0
+            cart.total_sale_amount = total_amount["total_sale_amount"] or 0
+
+            return cart
         else:
-            raise NotFoundError("Корзина не найдена")
-        return cart_with_calculations.first() if cart else None
+            raise NotFoundError("Корзина не найдена")
 
     def get_cart_by_user_id(self, user_id: Id) -> Cart | None:
         try:
@@ -102,7 +94,7 @@ class CartRepository:
                     output_field=DecimalField(decimal_places=2, max_digits=10),
                 ),
                 sale_amount=ExpressionWrapper(
-                    "quantity" * F("sub_product__sell_price") * F("sub_product__sale_percent") / 100,
+                    F("quantity") * F("sub_product__sell_price") * F("sub_product__sale_percent") / 100,
                     output_field=DecimalField(decimal_places=2, max_digits=10),
                 ),
                 total_price=ExpressionWrapper(
