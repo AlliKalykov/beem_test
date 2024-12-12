@@ -26,12 +26,8 @@ class CartService:
             raise BadRequest("Товар уже в корзине")
         if quantity > sub_product.stock:
             raise BadRequest("Недостаточно товара в наличии")
-        item, created = CartItem.objects.get_or_create(
-            cart=cart,
-            sub_product=sub_product,
-            defaults={"quantity": quantity},
-        )
-        return item
+        cart_item= self._cart_repository.get_or_create_item(cart, sub_product, quantity)
+        return cart_item
 
     def change_item_quantity(self, user_id: Id, session_key: str, item_id: Id, quantity: int):
         cart = self._cart_repository.get_or_create_cart(user_id, session_key)

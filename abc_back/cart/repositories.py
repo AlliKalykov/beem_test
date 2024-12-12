@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.db.models import DecimalField, ExpressionWrapper, F, Prefetch, QuerySet
 
+from abc_back.api.v1.products.serializers import SubProductImageSerializer
 from abc_back.cart.models import Cart, CartItem
 from abc_back.exceptions import NotFoundError
 from abc_back.types import Id
 from abc_back.users.models import User
+
+if TYPE_CHECKING:
+    from abc_back.products.models import  SubProduct
 
 
 class CartRepository:
@@ -61,6 +67,14 @@ class CartRepository:
 
     def clear_cart(self, cart):
         cart.items.all().delete()
+
+    def get_or_create_item(self, cart: Cart, sub_product: SubProduct, quantity: int) -> CartItem:
+        item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            sub_product=sub_product,
+            defaults={"quantity": quantity},
+        )
+        return self.get_cart_items(item.id)
 
     def get_cart_items(self, cart_id: id) -> QuerySet[CartItem]:
         cart_items_with_cost_calculations = (
