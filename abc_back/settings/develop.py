@@ -28,4 +28,14 @@ class Dev(Base):
         "http://127.0.0.1:3000",
         "http://31.129.97.238:8000",
     ]
+
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:300",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://31.129.97.238:8000",
+    ]
     SENTRY_DSN = env("SENTRY_DSN", default=None)
+
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_AGE = 1209600
