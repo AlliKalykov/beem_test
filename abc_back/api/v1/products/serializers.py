@@ -3,7 +3,7 @@ from __future__ import annotations
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from abc_back.products.models import Brand, Category, Color, Product, Size, SubProduct
+from abc_back.products.models import Brand, Category, Color, Product, ProductPoster, Size, SubProduct, SubProductImage
 
 
 class CategoryShortSerializer(serializers.ModelSerializer):
@@ -65,6 +65,12 @@ class BrandSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "slug", "logo", "description")
 
 
+class SubProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubProductImage
+        fields = ("id", "image", "is_featured", "sub_product")  # TODO: delete sub_product inPROD
+
+
 class SubProductShortSerializer(serializers.ModelSerializer):
     size = SizeSerializer(read_only=True)
     color = ColorSerializer(read_only=True)
@@ -72,6 +78,13 @@ class SubProductShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubProduct
         fields = ("id", "slug", "product", "size", "color", "stock", "is_available", "final_price")
+
+
+class SubProductSerializer(SubProductShortSerializer):
+    posters = SubProductImageSerializer(many=True, read_only=True)
+
+    class Meta(SubProductShortSerializer.Meta):
+        fields = SubProductShortSerializer.Meta.fields + ("posters",)
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -93,17 +106,24 @@ class ProductUpdateSerializer(ProductSerializer):
         fields = ProductSerializer.Meta.fields
 
 
+class ProductPosterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductPoster
+        fields = ("id", "image", "is_featured", "product")  # TODO: delete product inPROD
+
+
 class ProductShortSerializer(serializers.ModelSerializer):
     sub_products = serializers.SerializerMethodField()
     brand = BrandSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     colors = ColorSerializer(many=True, read_only=True)
     sizes = SizeSerializer(many=True, read_only=True)
+    posters = ProductPosterSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
         fields = (
-            "id", "name", "slug", "poster", "brand", "sub_products", "is_favorite", "colors", "sizes",
+            "id", "name", "slug", "brand", "sub_products", "is_favorite", "colors", "sizes", "posters",
         )
 
     @extend_schema_field(SubProductShortSerializer(many=True))
@@ -132,3 +152,9 @@ class ProductListSerializer(ProductShortSerializer):
             "is_novelty", "is_bestseller", "is_back_in_stock", "is_recommendation", "description", "use", "ingredient",
             "additional", "category",
         )
+
+class ProductDetailSerializer(ProductListSerializer):
+    sub_products = SubProductShortSerializer(many=True, read_only=True)
+
+    class Meta(ProductListSerializer.Meta):
+        fields = ProductListSerializer.Meta.fields

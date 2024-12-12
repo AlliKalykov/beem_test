@@ -1,4 +1,4 @@
-from .base import Base
+from .base import Base, env
 
 
 class Dev(Base):
@@ -28,3 +28,4 @@ class Dev(Base):
         "http://127.0.0.1:3000",
         "http://31.129.97.238:8000",
     ]
+    SENTRY_DSN = env("SENTRY_DSN", default=None)

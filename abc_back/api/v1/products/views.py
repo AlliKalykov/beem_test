@@ -21,8 +21,8 @@ from ...pagination import DefaultPageNumberPagination
 from . import openapi
 from .filters import ProductFilterSet
 from .serializers import (
-    CategoryShortSerializer, CategoryTreeSerializer, ProductListSerializer, ProductSerializer, ProductShortSerializer,
-    ProductUpdateSerializer,
+    CategoryShortSerializer, CategoryTreeSerializer, ProductDetailSerializer, ProductListSerializer, ProductSerializer,
+    ProductShortSerializer, ProductUpdateSerializer,
 )
 
 
@@ -88,7 +88,7 @@ class ProductViewSet(
     serializer_classes = {
         "create": ProductSerializer,
         "list": ProductShortSerializer,
-        "retrieve": ProductListSerializer,
+        "retrieve": ProductDetailSerializer,
         "update": ProductUpdateSerializer,
         "partial_update": ProductUpdateSerializer,
         "favorite": FavoriteProductShortSerializer,
@@ -139,7 +139,6 @@ class ProductViewSet(
     ):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         slug = kwargs["slug"]
         product = product_repository.update_product(slug, **serializer.validated_data)
         serializer = ProductListSerializer(product)

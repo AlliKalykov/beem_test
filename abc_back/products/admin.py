@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from abc_back.mixins import ReadOnlyAdminMixin
-from abc_back.products.models import Brand, Category, Color, Product, Size, SubProduct, SubProductImage
+from abc_back.products.models import Brand, Category, Color, Product, ProductPoster, Size, SubProduct, SubProductImage
 from abc_back.utils import render_object_changelist_link
 
 
@@ -13,7 +13,17 @@ class SubProductImageInline(admin.TabularInline):
 class SubProductInline(admin.TabularInline):
     model = SubProduct
     extra = 0
-    inlines = [SubProductImageInline]
+    fields = (
+        "size", "color", "slug", "is_available", "article", "stock", "purchase_price", "sell_price", "sale_percent",
+        "final_price",
+    )
+    readonly_fields = ("final_price",)
+    show_change_link = True
+
+
+class ProductPosterInline(admin.TabularInline):
+    model = ProductPoster
+    extra = 0
 
 
 @admin.register(Brand)
@@ -54,7 +64,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("category", "brand", "created_at")
 
     filter_horizontal = ("category",)
-    inlines = [SubProductInline]
+    inlines = [ProductPosterInline, SubProductInline]
 
     @admin.display(description="Категории")
     def get_categories(self, obj):
@@ -74,5 +84,11 @@ class ProductAdmin(admin.ModelAdmin):
 class SubProductAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = ("id", "slug", "product", "stock", "size", "color", "sale_percent", "final_price", "is_available")
     list_display_links = ("id", "slug", "product")
+    readonly_fields = ("final_price",)
+    list_editable = ("is_available",)
     search_fields = ("id", "slug", "product")
     list_filter = ("is_available", "production_date", "expiration_date", "created_at")
+    inlines = [SubProductImageInline]
+
+    def has_change_permission(self, request, obj=None):
+        return True

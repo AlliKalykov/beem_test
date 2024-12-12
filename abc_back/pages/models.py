@@ -68,6 +68,7 @@ class GiftCertificate(models.Model):
     phone = models.CharField("Номер телефона", max_length=20)
     whatsapp = models.CharField("WhatsApp номер", max_length=255)
     telegram = models.CharField("Telegram номер", max_length=255)
+    questionary_poster = models.FileField("Постер анкеты", upload_to=file_upload_to, blank=True, null=True)
     is_featured = models.BooleanField("Основное", default=False)
 
     objects = models.Manager()

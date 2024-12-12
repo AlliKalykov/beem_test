@@ -95,7 +95,6 @@ class Product(TimestampedModelMixin, PublishedModelMixin):
 
     name = models.CharField("Название", max_length=255, unique=True, db_index=True)
     slug = models.SlugField("Слаг", max_length=255, unique=True, help_text="Короткое название для URL")
-    poster = models.FileField("Постер", upload_to=product_image_upload_to, blank=True, null=True)
 
     category = models.ManyToManyField(
         Category, verbose_name="Категория",
@@ -137,6 +136,22 @@ class Product(TimestampedModelMixin, PublishedModelMixin):
         ]
 
 
+class ProductPoster(TimestampedModelMixin, PublishedModelMixin):
+    product = models.ForeignKey(
+        Product, verbose_name="Товар", on_delete=models.CASCADE,
+        related_name="posters", related_query_name="poster",
+    )
+    image = models.ImageField("Изображение", upload_to=product_image_upload_to)
+    is_featured = models.BooleanField("Основное изображение", default=False)
+
+    class Meta:
+        verbose_name = "Постер"
+        verbose_name_plural = "Постеры"
+
+    def __str__(self):
+        return f"[{self.id}]: {self.product}"
+
+
 class Color(models.Model):
 
     name = models.CharField("Цвет", max_length=24, unique=True)
@@ -166,18 +181,6 @@ class Size(models.Model):
         return f"{self.value} {self.kind}"
 
 
-class SubProductImage(models.Model):
-    image = models.ImageField("Изображение", upload_to=sub_product_image_upload_to)
-    is_featured = models.BooleanField("Основное изображение", default=False)
-
-    class Meta:
-        verbose_name = "Изображение подпродукта"
-        verbose_name_plural = "Изображения подпродуктов"
-
-    def __str__(self):
-        return f"{self.image}"
-
-
 class SubProduct(TimestampedModelMixin, PublishedModelMixin):
     """Подтовар - Сущность, представляющая товар со всеми размерами и цветами.
 
@@ -203,11 +206,6 @@ class SubProduct(TimestampedModelMixin, PublishedModelMixin):
     )
 
     slug = models.SlugField("Слаг", max_length=255, unique=True, help_text="Короткое название для URL")
-
-    posters = models.ManyToManyField(
-        SubProductImage, verbose_name="Изображение подпродукта", blank=True,
-        related_name="sub_products", related_query_name="sub_product",
-    )
 
     stock = models.PositiveIntegerField("В наличии", default=0)
     is_available = models.BooleanField("Доступен для продажи", default=True)
@@ -238,3 +236,19 @@ class SubProduct(TimestampedModelMixin, PublishedModelMixin):
         else:
             self.final_price = self.sell_price
         super().save(*args, **kwargs)
+
+
+class SubProductImage(models.Model):
+    sub_product = models.ForeignKey(
+        SubProduct, verbose_name="Подтовар", on_delete=models.CASCADE, null=True,
+        related_name="posters", related_query_name="poster",
+    )
+    image = models.ImageField("Изображение", upload_to=sub_product_image_upload_to)
+    is_featured = models.BooleanField("Основное изображение", default=False)
+
+    class Meta:
+        verbose_name = "Изображение подпродукта"
+        verbose_name_plural = "Изображения подпродуктов"
+
+    def __str__(self):
+        return f"{self.image}"
