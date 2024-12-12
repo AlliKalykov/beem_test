@@ -79,9 +79,9 @@ class CartRepository:
             sub_product=sub_product,
             defaults={"quantity": quantity},
         )
-        return self.get_cart_items(item.id)
+        return self.get_cart_item_by_id(cart.id, item.id)
 
-    def get_cart_items(self, cart_id: id) -> QuerySet[CartItem]:
+    def get_cart_items(self, cart_id: id, cart_item_id: Id | None = None) -> QuerySet[CartItem]:
         cart_items_with_cost_calculations = (
             CartItem.objects.filter(cart_id=cart_id)
             .prefetch_related("sub_product")
@@ -103,11 +103,14 @@ class CartRepository:
                 ),
             )
         )
-        return cart_items_with_cost_calculations
+        return (
+            cart_items_with_cost_calculations
+            if cart_item_id is None else cart_items_with_cost_calculations.get(id=cart_item_id)
+        )
 
-    def get_cart_item_by_id(self, cart_item_id: Id) -> CartItem | None:
+    def get_cart_item_by_id(self, cart_id: Id, cart_item_id: Id) -> CartItem | None:
         try:
-            cart_item = CartItem.objects.get(id=cart_item_id)
+            cart_item = self.get_cart_items(cart_id, cart_item_id)
         except CartItem.DoesNotExist:
             return None
         return cart_item

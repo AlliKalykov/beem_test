@@ -31,7 +31,7 @@ class CartService:
 
     def change_item_quantity(self, user_id: Id, session_key: str, item_id: Id, quantity: int):
         cart = self._cart_repository.get_or_create_cart(user_id, session_key)
-        item = self._cart_repository.get_cart_item_by_id(item_id)
+        item = self._cart_repository.get_cart_item_by_id(cart.id, item_id)
         if item.cart != cart:
             raise BadRequest("Товар не в корзине")
         if quantity > item.sub_product.stock:
@@ -42,7 +42,7 @@ class CartService:
 
     def remove_item(self, user_id: Id, session_key: str, item_id: Id):
         cart = self._cart_repository.get_or_create_cart(user_id, session_key)
-        item = self._cart_repository.get_cart_item_by_id(item_id)
+        item = self._cart_repository.get_cart_item_by_id(cart.id, item_id)
         if item.cart != cart:
             raise BadRequest("Товар не в корзине")
         item.delete()
