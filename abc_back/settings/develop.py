@@ -13,28 +13,22 @@ class Dev(Base):
 
     CORS_ALLOW_CREDENTIALS = True
 
-    # CORS_ALLOW_ORIGINS = [
-    #     "http://localhost:300",
-    #     "http://localhost:3000",
-    #     "http://127.0.0.1:3000",
-    #     "http://31.129.97.238:8000",
-    # ]
-
-    CORS_ALLOW_HEADERS = "*"
-
-    # CORS_ORIGIN_WHITELIST = [
-    #     "http://localhost:300",
-    #     "http://localhost:3000",
-    #     "http://127.0.0.1:3000",
-    #     "http://31.129.97.238:8000",
-    # ]
-
-    CORS_ALLOWED_ORIGINS = [
+    CORS_ALLOW_ORIGINS = [
         "http://localhost:300",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://31.129.97.238:8000",
     ]
+
+    CORS_ALLOW_HEADERS = "*"
+
+    CORS_ORIGIN_WHITELIST = [
+        "http://localhost:300",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://31.129.97.238:8000",
+    ]
+
     SENTRY_DSN = env("SENTRY_DSN", default=None)
 
     SESSION_COOKIE_SAMESITE = 'Lax'
