@@ -25,7 +25,12 @@ class CartItemSerializer(CartItemShortSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)
+    total_amount = serializers.DecimalField(read_only=True, decimal_places=2, max_digits=10)
+    total_amount_without_sale = serializers.DecimalField(read_only=True, decimal_places=2, max_digits=10)
+    total_sale_amount = serializers.DecimalField(read_only=True, decimal_places=2, max_digits=10)
 
     class Meta:
         model = Cart
-        fields = ["id", "user", "session_key", "items"]  # TODO: убрать после разработоки user и session_key
+        fields = [
+            "id", "user", "session_key", "items", "total_amount", "total_amount_without_sale", "total_sale_amount",
+    ]  # TODO: убрать после разработоки user и session_key

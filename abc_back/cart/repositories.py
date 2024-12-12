@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.db.models import DecimalField, ExpressionWrapper, F, Prefetch, QuerySet
+from django.db.models import DecimalField, ExpressionWrapper, F, Prefetch, QuerySet, Sum
 
-from abc_back.api.v1.products.serializers import SubProductImageSerializer
 from abc_back.cart.models import Cart, CartItem
 from abc_back.exceptions import NotFoundError
 from abc_back.types import Id
@@ -25,10 +24,24 @@ class CartRepository:
         cart = self.get_cart(user_id, session_key)
         if cart:
             cart_items_with_cost_calculations = self.get_cart_items(cart.id)
-            cart_with_calculations = Cart.objects.filter(id=cart.id).prefetch_related(
-                Prefetch(
-                    "items",
-                    queryset=cart_items_with_cost_calculations,
+            cart_with_calculations = (
+                Cart.objects.filter(id=cart.id)
+                .prefetch_related(
+                    Prefetch(
+                        "items",
+                        queryset=cart_items_with_cost_calculations,
+                    ),
+                )
+                .annotate(
+                    total_amount=ExpressionWrapper(
+                        Sum("items__total_price"), output_field=DecimalField(decimal_places=2, max_digits=10)
+                    ),
+                    total_amount_without_sale=ExpressionWrapper(
+                        Sum("items__amount_without_sale"), output_field=DecimalField(decimal_places=2, max_digits=10)
+                    ),
+                    total_sale_amount=ExpressionWrapper(
+                        Sum("items__sale_amount"), output_field=DecimalField(decimal_places=2, max_digits=10)
+                    ),
                 ),
             )
         else:
@@ -84,6 +97,14 @@ class CartRepository:
                 sell_price=F("sub_product__sell_price"),
                 sale_percent=F("sub_product__sale_percent"),
                 final_price=F("sub_product__final_price"),
+                amount_without_sale=ExpressionWrapper(
+                    F("quantity") * F("sub_product__sell_price"),
+                    output_field=DecimalField(decimal_places=2, max_digits=10),
+                ),
+                sale_amount=ExpressionWrapper(
+                    "quantity" * F("sub_product__sell_price") * F("sub_product__sale_percent") / 100,
+                    output_field=DecimalField(decimal_places=2, max_digits=10),
+                ),
                 total_price=ExpressionWrapper(
                     F("quantity") * F("sub_product__final_price"),
                     output_field=DecimalField(decimal_places=2, max_digits=10),
