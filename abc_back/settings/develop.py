@@ -30,7 +30,3 @@ class Dev(Base):
     ]
 
     SENTRY_DSN = env("SENTRY_DSN", default=None)
-
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_AGE = 1209600
-    SESSION_COOKIE_HTTPONLY = True
