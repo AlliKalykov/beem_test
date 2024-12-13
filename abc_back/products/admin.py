@@ -74,6 +74,8 @@ class ProductAdmin(admin.ModelAdmin):
     @admin.display(description="Позиции товара")
     def get_sub_products_link(self, obj):
         sub_product_count = obj.sub_products.count()
+        if sub_product_count < 1:
+            return f"Позиции товара ({sub_product_count})"
         return render_object_changelist_link(
             SubProduct.objects.first(), content=f"Позиции товара ({sub_product_count})",
             query=f"product__id__exact={obj.pk}", new_tab=True,

@@ -25,7 +25,7 @@ class CartAdmin(admin.ModelAdmin):
     def cart_items_link(self, obj):
         """Добавляет ссылку на OrderItemAdmin с фильтром по текущему заказу."""
         if not obj.items.exists():
-            f"Пустая корзина"
+            return f"Пустая корзина"
         return render_object_changelist_link(
             obj.items.first(), content="Товары в корзине", query=f"cart__id__exact={obj.pk}", new_tab=True,
         )
