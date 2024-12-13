@@ -26,7 +26,7 @@ class OrderAdmin(admin.ModelAdmin):
         """Добавляет ссылку на OrderItemAdmin с фильтром по текущему заказу."""
         position_count = obj.order_items.count()
         if position_count < 1:
-            return f"Пустой заказ"
+            return "Пустой заказ"
         return render_object_changelist_link(
             OrderItem.objects.first(), content=f"Детали заказа ({position_count})",
             query=f"order__id__exact={obj.pk}", new_tab=True,

@@ -217,6 +217,7 @@ class UserViewSet(MultiSerializerViewSetMixin, GenericViewSet):
         if not user:
             raise ErrorCode.EMAIL_ALREADY_TAKEN.as_exception()
         refresh = RefreshToken.for_user(user)
+        login(request, user)
         return Response(
             data={
                 "refresh_token": str(refresh),

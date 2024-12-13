@@ -33,4 +33,4 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = [
             "id", "user", "session_key", "items", "total_amount", "total_amount_without_sale", "total_sale_amount",
-    ]  # TODO: убрать после разработоки user и session_key
+        ]  # TODO: убрать после разработоки user и session_key

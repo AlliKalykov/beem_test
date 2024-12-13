@@ -153,6 +153,7 @@ class ProductListSerializer(ProductShortSerializer):
             "additional", "category",
         )
 
+
 class ProductDetailSerializer(ProductListSerializer):
     sub_products = SubProductSerializer(many=True, read_only=True)
 

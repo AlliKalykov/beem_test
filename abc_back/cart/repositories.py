@@ -2,26 +2,27 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.db.models import DecimalField, ExpressionWrapper, F, Prefetch, QuerySet, Sum
+from django.db.models import DecimalField, ExpressionWrapper, F, QuerySet, Sum
 
 from abc_back.cart.models import Cart, CartItem
 from abc_back.exceptions import NotFoundError
 from abc_back.types import Id
 from abc_back.users.models import User
 
+
 if TYPE_CHECKING:
-    from abc_back.products.models import  SubProduct
+    from abc_back.products.models import SubProduct
 
 
 class CartRepository:
     """Репозиторий для работы с корзиной."""
 
-    def get_cart(self, user_id: Id | None = None, session_key: str | None = None) -> Cart | None:
-        cart = self.get_cart_by_user_id(user_id) if user_id else self.get_cart_by_session_key(session_key)
+    def get_cart(self, session_key: str) -> Cart | None:
+        cart = self.get_cart_by_session_key(session_key)
         return cart
 
-    def get_cart_with_calculations(self, user_id: Id | None = None, session_key: str | None = None) -> Cart | None:
-        cart = self.get_cart(user_id, session_key)
+    def get_cart_with_calculations(self, session_key: str) -> Cart | None:
+        cart = self.get_cart(session_key)
         if cart:
             cart_items_with_cost_calculations = self.get_cart_items(cart.id)
 
@@ -54,17 +55,13 @@ class CartRepository:
             return None
         return cart
 
-    def create_cart(self, user_id: Id | None = None, session_key=None):
-        try:
-            user = User.objects.get(id=user_id) if user_id else None
-        except User.DoesNotExist:
-            raise NotFoundError("Пользователь не найден")
-        return Cart.objects.create(user=user, session_key=session_key)
+    def create_cart(self, session_key: str):
+        return Cart.objects.create(session_key=session_key)
 
-    def get_or_create_cart(self, user_id: Id | None = None, session_key: str | None = None):
-        cart = self.get_cart(user_id, session_key)
+    def get_or_create_cart(self, session_key: str):
+        cart = self.get_cart(session_key)
         if not cart:
-            cart = self.create_cart(user_id, session_key)
+            cart = self.create_cart(session_key)
         return cart
 
     def delete_cart(self, cart):

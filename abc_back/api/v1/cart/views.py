@@ -10,12 +10,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from abc_back.api.pagination import DefaultPageNumberPagination
+from abc_back.api.utils import get_session_key
 from abc_back.api.views import MultiSerializerViewSetMixin
 from abc_back.cart.models import CartItem
 from abc_back.cart.services import CartService
 from abc_back.containers import Container
 
-from abc_back.api.exceptions import BadRequest
 from .serializers import CartItemSerializer, CartItemShortSerializer, CartSerializer
 
 
@@ -49,28 +49,19 @@ class CartItemViewSet(
         self, *, cart_repository: CartRepository = Provide[Container.cart_package.cart_repository],
         cart_service: CartService = Provide[Container.cart_package.cart_service],
     ):
-        user_id = self.request.user.id if self.request.user.is_authenticated else None
-        cart = cart_service.get_or_create_cart(user_id, self.request.session.session_key)
+        session_key = get_session_key(self.request)
+        cart = cart_service.get_or_create_cart(session_key)
         cart_items = cart_repository.get_cart_items(cart.id)
         return cart_items
-
-    def get_session_and_user(self):
-        """Универсальный метод для получения user_id и session_key."""
-        user_id = self.request.user.id if self.request.user.is_authenticated else None
-        try:
-            session_key = self.request.session.session_key
-        except AttributeError:
-            raise BadRequest("Сессия не найдена")
-        return user_id, session_key
 
     @inject
     def create(self, request: Request, *, cart_service: CartService = Provide[Container.cart_package.cart_service]):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user_id, session_key = self.get_session_and_user()  # user_id, session_key
+        session_key = get_session_key(self.request)  # user_id, session_key
         sub_product_id = serializer.validated_data["sub_product"].id
         quantity = serializer.validated_data["quantity"]
-        cart_item = cart_service.add_item(user_id, session_key, sub_product_id, quantity)
+        cart_item = cart_service.add_item(session_key, sub_product_id, quantity)
         return Response(CartItemSerializer(cart_item).data, status=status.HTTP_201_CREATED)
 
     @inject
@@ -79,17 +70,17 @@ class CartItemViewSet(
     ):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user_id, session_key = self.get_session_and_user()
+        session_key = get_session_key(self.request)
         quantity = serializer.validated_data["quantity"]
-        cart_item = cart_service.change_item_quantity(user_id, session_key, pk, quantity)
+        cart_item = cart_service.change_item_quantity(session_key, pk, quantity)
         return Response(CartItemSerializer(cart_item).data, status=status.HTTP_200_OK)
 
     @inject
     def destroy(
         self, request: Request, *, cart_service: CartService = Provide[Container.cart_package.cart_service], pk: int,
     ):
-        user_id, session_key = self.get_session_and_user()
-        cart_service.remove_item(user_id, session_key, pk)
+        session_key = get_session_key(self.request)
+        cart_service.remove_item(session_key, pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -104,8 +95,8 @@ class CartViewSet(viewsets.GenericViewSet):
         self, *, cart_repository: CartRepository = Provide[Container.cart_package.cart_repository],
         cart_service: CartService = Provide[Container.cart_package.cart_service],
     ):
-        user_id = self.request.user.id if self.request.user.is_authenticated else None
-        cart = cart_repository.get_cart_with_calculations(user_id, self.request.session.session_key)
+        session_key = get_session_key(self.request)
+        cart = cart_repository.get_cart_with_calculations(session_key)
         return cart
 
     @action(detail=False, methods=["GET"])
